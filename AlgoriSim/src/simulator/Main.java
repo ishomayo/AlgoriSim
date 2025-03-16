@@ -142,7 +142,7 @@ public class Main extends JFrame {
         fcfsButton.addActionListener(e -> showSimulationScreenFCFS("FCFS"));
         rrButton.addActionListener(e -> showSimulationScreenRoundRobin("Round Robin"));
         sjfPreButton.addActionListener(e -> showSimulationScreenSJFPreemptive("SJFPre"));
-        sjfNonPreButton.addActionListener(e -> showSimulationScreenFCFS("SJFNon"));
+        sjfNonPreButton.addActionListener(e -> showSimulationSJFNonPreemptive("SJFNon"));
         priorityPreButton.addActionListener(e -> showSimulationScreenPriorityPreemptive("PriorityPre"));
         priorityNonPreButton.addActionListener(e -> showSimulationScreenPriorityNonPreemptive("PriorityNon"));
 
@@ -180,6 +180,12 @@ public class Main extends JFrame {
 
         // Show the screen
         layout.show(mainPanel, "SelectAlgorithmScreen");
+    }
+
+    private void showSimulationSJFNonPreemptive(String algorithm) {
+        SJFNonPreemptive simulationScreen = new SJFNonPreemptive(layout, null);
+        mainPanel.add(simulationScreen, "SimulationScreen");
+        layout.show(mainPanel, "SimulationScreen");
     }
 
     private void showSimulationScreenPriorityPreemptive(String algorithm) {
