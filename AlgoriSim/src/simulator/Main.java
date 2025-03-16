@@ -106,7 +106,7 @@ public class Main extends JFrame {
 
         // Add action listeners for buttons
         fcfsButton.addActionListener(e -> showSimulationScreenFCFS("FCFS"));
-        rrButton.addActionListener(e -> showSimulationScreenSJFPreemptive("Round Robin"));
+        rrButton.addActionListener(e -> showSimulationScreenRoundRobin("Round Robin"));
         sjfPreButton.addActionListener(e -> showSimulationScreenSJFPreemptive("SJFPre"));
         sjfNonPreButton.addActionListener(e -> showSimulationScreenFCFS("SJFNon"));
         priorityPreButton.addActionListener(e -> showSimulationScreenFCFS("PriorityPre"));
@@ -156,6 +156,12 @@ public class Main extends JFrame {
 
     private void showSimulationScreenSJFPreemptive(String algorithm) {
         SJFPreemptive simulationScreen = new SJFPreemptive(layout, null);
+        mainPanel.add(simulationScreen, "SimulationScreen");
+        layout.show(mainPanel, "SimulationScreen");
+    }
+
+    private void showSimulationScreenRoundRobin(String algorithm) {
+        RoundRobin simulationScreen = new RoundRobin();
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
