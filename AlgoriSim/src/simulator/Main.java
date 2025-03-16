@@ -1,4 +1,3 @@
-package simulator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -106,12 +105,12 @@ public class Main extends JFrame {
         JButton priorityNonPreButton = new JButton("Priority (Non-preemptive)");
 
         // Add action listeners for buttons
-        fcfsButton.addActionListener(e -> showSimulationScreen("FCFS"));
-        rrButton.addActionListener(e -> showSimulationScreen("Round Robin"));
-        sjfPreButton.addActionListener(e -> showSimulationScreen("SJFPre"));
-        sjfNonPreButton.addActionListener(e -> showSimulationScreen("SJFNon"));
-        priorityPreButton.addActionListener(e -> showSimulationScreen("PriorityPre"));
-        priorityNonPreButton.addActionListener(e -> showSimulationScreen("PriorityNon"));
+        fcfsButton.addActionListener(e -> showSimulationScreenFCFS("FCFS"));
+        rrButton.addActionListener(e -> showSimulationScreenSJFPreemptive("Round Robin"));
+        sjfPreButton.addActionListener(e -> showSimulationScreenSJFPreemptive("SJFPre"));
+        sjfNonPreButton.addActionListener(e -> showSimulationScreenFCFS("SJFNon"));
+        priorityPreButton.addActionListener(e -> showSimulationScreenFCFS("PriorityPre"));
+        priorityNonPreButton.addActionListener(e -> showSimulationScreenFCFS("PriorityNon"));
     
         // Add buttons to panel
         buttonPanel.add(fcfsButton);
@@ -149,8 +148,14 @@ public class Main extends JFrame {
         layout.show(mainPanel, "SelectAlgorithmScreen");
     }
 
-    private void showSimulationScreen(String algorithm) {
-        SimulationScreen simulationScreen = new SimulationScreen(algorithm, layout, mainPanel);
+    private void showSimulationScreenFCFS(String algorithm) {
+        FCFS simulationScreen = new FCFS(layout, null);
+        mainPanel.add(simulationScreen, "SimulationScreen");
+        layout.show(mainPanel, "SimulationScreen");
+    }
+
+    private void showSimulationScreenSJFPreemptive(String algorithm) {
+        SJFPreemptive simulationScreen = new SJFPreemptive(layout, null);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }

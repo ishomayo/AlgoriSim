@@ -1,5 +1,3 @@
-package simulator;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -144,7 +142,7 @@ public class DataInputScreen extends JPanel  {
         Collections.shuffle(priorityList);
 
         model.setRowCount(0);
-        File file = new File("D://Documents//AlgoriSim//AlgoriSim//random_data.txt");
+        File file = new File("random_data.txt");
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < numRows; i++) {
@@ -300,7 +298,7 @@ public class DataInputScreen extends JPanel  {
     
     // Method to save data to a file
     private void saveDataToFile(DefaultTableModel model) {
-        File file = new File("D://Documents//AlgoriSim//AlgoriSim//user_input_data.txt");
+        File file = new File("data.txt");
     
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int row = 0; row < model.getRowCount(); row++) {
