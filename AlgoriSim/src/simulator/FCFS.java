@@ -248,7 +248,17 @@ public class FCFS extends JPanel {
 
     private void updateUI(Process p) {
         updateGanttChart(p);
+        updateTable();
     }
+    
+    private void updateTable() {
+        for (int i = 0; i < processes.size(); i++) {
+            Process p = processes.get(i);
+            tableModel.setValueAt(p.waitingTime, i, 4);
+            tableModel.setValueAt(p.turnaroundTime, i, 5);
+        }
+    }
+    
 
     private void updateGanttChart(Process p) {
         timeline.add(new Event(p.processID, p.startTime, p.completionTime));
