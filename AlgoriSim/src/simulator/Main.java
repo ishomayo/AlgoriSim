@@ -144,7 +144,7 @@ public class Main extends JFrame {
         sjfPreButton.addActionListener(e -> showSimulationScreenSJFPreemptive("SJFPre"));
         sjfNonPreButton.addActionListener(e -> showSimulationScreenFCFS("SJFNon"));
         priorityPreButton.addActionListener(e -> showSimulationScreenPriorityPreemptive("PriorityPre"));
-        priorityNonPreButton.addActionListener(e -> showSimulationScreenFCFS("PriorityNon"));
+        priorityNonPreButton.addActionListener(e -> showSimulationScreenPriorityNonPreemptive("PriorityNon"));
 
         // Add buttons to panel
         buttonPanel.add(fcfsButton);
@@ -190,6 +190,12 @@ public class Main extends JFrame {
 
     private void showSimulationScreenFCFS(String algorithm) {
         FCFS simulationScreen = new FCFS(layout, null);
+        mainPanel.add(simulationScreen, "SimulationScreen");
+        layout.show(mainPanel, "SimulationScreen");
+    }
+
+    private void showSimulationScreenPriorityNonPreemptive(String algorithm) {
+        PriorityNonPreemptive simulationScreen = new PriorityNonPreemptive(layout, null);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
