@@ -22,4 +22,16 @@ public class CommonConstants {
     public static final String fileClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\file_clicked.png";
     public static final String backDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\back_default.png";
     public static final String backClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\back_clicked.png";
+    public static final String FCFSDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\FCFS_default.png";
+    public static final String FCFSClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\FCFS_clicked.png";
+    public static final String RRDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\RR_default.png";
+    public static final String RRClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\RR_clicked.png";
+    public static final String SJFPreDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFPre_default.png";
+    public static final String SJFPreClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFPre_clicked.png";
+    public static final String SJFNonDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFNon_default.png";
+    public static final String SJFNonClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFNon_clicked.png";
+    public static final String PrioPreDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioPre_default.png";
+    public static final String PrioPreClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioPre_clicked.png";
+    public static final String PrioNonDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioNon_default.png";
+    public static final String PrioNonClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioNon_clicked.png";
 }

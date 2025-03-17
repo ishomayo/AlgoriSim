@@ -42,8 +42,7 @@ class CustomPanelSJF extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (timeline.isEmpty())
-            return;
+        if (timeline.isEmpty()) return;
 
         int x = 30, y = 20, width = 30;
 
@@ -142,8 +141,7 @@ public class SJFNonPreemptive extends JPanel {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 3)
-                    continue;
+                if (data.length < 3) continue;
                 processes.add(new ProcessSJF(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
             }
             displayProcesses();
