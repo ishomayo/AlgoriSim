@@ -39,7 +39,8 @@ class CustomPanelPriorityNonPreemptive extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (timeline.isEmpty()) return;
+        if (timeline.isEmpty())
+            return;
 
         int x = 30, y = 20, width = 40; // Increased width for visibility
 
@@ -137,7 +138,8 @@ public class PriorityNonPreemptive extends JPanel {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 4) continue;
+                if (data.length < 4)
+                    continue;
                 processes.add(new ProcessPriorityNonPreemptive(
                         data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3])));
             }
@@ -150,7 +152,7 @@ public class PriorityNonPreemptive extends JPanel {
     private void displayProcesses() {
         tableModel.setRowCount(0);
         for (ProcessPriorityNonPreemptive p : processes) {
-            tableModel.addRow(new Object[]{p.processID, p.burstTime, p.arrivalTime, p.priority, "-", "-"});
+            tableModel.addRow(new Object[] { p.processID, p.burstTime, p.arrivalTime, p.priority, "-", "-" });
         }
     }
 
@@ -195,10 +197,12 @@ public class PriorityNonPreemptive extends JPanel {
         for (ProcessPriorityNonPreemptive p : processes) {
             totalWT += p.waitingTime;
             totalTAT += p.turnaroundTime;
-            tableModel.addRow(new Object[]{p.processID, p.burstTime, p.arrivalTime, p.priority, p.waitingTime, p.turnaroundTime});
+            tableModel.addRow(new Object[] { p.processID, p.burstTime, p.arrivalTime, p.priority, p.waitingTime,
+                    p.turnaroundTime });
         }
 
-        totalExecutionTimeLabel.setText("Total Execution Time: " + timeline.get(timeline.size() - 1).finishTime + " ms");
+        totalExecutionTimeLabel
+                .setText("Total Execution Time: " + timeline.get(timeline.size() - 1).finishTime + " ms");
     }
 
     private void stopSimulation() {

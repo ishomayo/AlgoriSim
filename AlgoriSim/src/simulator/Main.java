@@ -1,8 +1,6 @@
 
 import javax.swing.*;
 
-import org.w3c.dom.events.MouseEvent;
-
 import java.awt.*;
 
 public class Main extends JFrame {

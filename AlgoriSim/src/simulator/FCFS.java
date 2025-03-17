@@ -36,8 +36,7 @@ class CustomPanel extends JPanel {
     private final Map<String, Color> processColors = new HashMap<>();
     private final List<Color> availableColors = Arrays.asList(
             Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.MAGENTA,
-            Color.CYAN, Color.PINK, Color.YELLOW, Color.LIGHT_GRAY, Color.GRAY
-    );
+            Color.CYAN, Color.PINK, Color.YELLOW, Color.LIGHT_GRAY, Color.GRAY);
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -52,7 +51,8 @@ class CustomPanel extends JPanel {
 
             // Assign a unique color to each process
             if (!processColors.containsKey(event.processName)) {
-                processColors.put(event.processName, availableColors.get(processColors.size() % availableColors.size()));
+                processColors.put(event.processName,
+                        availableColors.get(processColors.size() % availableColors.size()));
             }
             g.setColor(processColors.get(event.processName));
 
@@ -170,7 +170,8 @@ public class FCFS extends JPanel {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 3) continue;
+                if (data.length < 3)
+                    continue;
                 processes.add(new Process(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
             }
 
@@ -244,13 +245,12 @@ public class FCFS extends JPanel {
             tableModel.setValueAt(String.format("%.2f", avgTurnaroundTime), i, 7);
         }
     }
-    
 
     private void updateUI(Process p) {
         updateGanttChart(p);
         updateTable();
     }
-    
+
     private void updateTable() {
         for (int i = 0; i < processes.size(); i++) {
             Process p = processes.get(i);
@@ -258,7 +258,6 @@ public class FCFS extends JPanel {
             tableModel.setValueAt(p.turnaroundTime, i, 5);
         }
     }
-    
 
     private void updateGanttChart(Process p) {
         timeline.add(new Event(p.processID, p.startTime, p.completionTime));
