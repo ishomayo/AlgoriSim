@@ -1,7 +1,10 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseEvent;
+
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.io.*;
 
 import java.util.*;
@@ -12,37 +15,60 @@ public class DataInputScreen extends JPanel  {
     private CardLayout layout;
     private JButton continueButton; // Store as instance variable
     private Main main;
+    private Image backgroundImage;
 
     public DataInputScreen(Main main, CardLayout layout, JPanel mainPanel) {
         this.main = main;
         this.layout = layout;
         this.mainPanel = mainPanel;
+
+        backgroundImage = new ImageIcon("C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\DataInputScreen.jpg").getImage();  // Replace with your image path
+   
         showRandomDataScreen();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 
     // Data Input Selection screen
     public void showDataInputSelection() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new EmptyBorder(50, 50, 50, 50));
-        panel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        
+        JPanel panel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
 
-        JLabel titleLabel = new JLabel("Select Data Input Method", SwingConstants.CENTER);
+        panel.setOpaque(false);
+        panel.setBorder(new EmptyBorder(50, 50, 50, 50));
+
+        JLabel titleLabel = new JLabel("", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
         buttonPanel.setOpaque(false);
 
-        JButton randomButton = createCardButton("Generate Random Data");
-        JButton userInputButton = createCardButton("User-Inputted Data");
-        JButton fileInputButton = createCardButton("Load from Text File");
+        JButton randomButton = createStyledButtonDATAINPUT(CommonConstants.randomDefault, CommonConstants.randomClicked);
+        JButton userInputButton = createStyledButtonDATAINPUT(CommonConstants.userinpDefault, CommonConstants.userinpClicked);
+        JButton fileInputButton = createStyledButtonDATAINPUT(CommonConstants.fileDefault, CommonConstants.fileClicked);
+
+        buttonPanel.setBorder(new EmptyBorder(150, 0, 0, 0)); // Adjust the first value (top padding)
 
         buttonPanel.add(randomButton);
         buttonPanel.add(userInputButton);
         buttonPanel.add(fileInputButton);
+        
 
-        JButton backButton = new JButton("←");
-        backButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        backButton.setPreferredSize(new Dimension(50, 30));
+        JButton backButton = createStyledButtonBUTTON(CommonConstants.backDefault, CommonConstants.backClicked);
 
         JPanel backPanel = new JPanel();
         backPanel.add(backButton);
@@ -60,29 +86,68 @@ public class DataInputScreen extends JPanel  {
         mainPanel.add(panel, "DataInputSelection");
     }
 
-    private JButton createCardButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 16));
-        button.setPreferredSize(new Dimension(250, 100));
+    private static JButton createStyledButtonDATAINPUT(String defaultIconPath,String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
         button.setFocusPainted(false);
-        button.setBackground(Color.WHITE);
-        button.setForeground(Color.BLACK);
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2, true),
-                BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(230, 230, 230));
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(200, 200));
+    
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+    
+        button.setIcon(defaultIcon);
+    
+        button.addMouseListener(new MouseAdapter() {
+    
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(Color.WHITE);
+    
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
             }
         });
-
+    
         return button;
+    }
+
+    private static JButton createStyledButtonBUTTON(String defaultIconPath,String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+    
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+    
+        button.setIcon(defaultIcon);
+    
+        button.addMouseListener(new MouseAdapter() {
+    
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
+            }
+    
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+        });
+    
+        return button;
+    }
+
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 
     private void showRandomDataScreen() {

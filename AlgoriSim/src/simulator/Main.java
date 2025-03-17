@@ -1,7 +1,8 @@
 
 import javax.swing.*;
-
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Main extends JFrame {
 
@@ -39,83 +40,103 @@ public class Main extends JFrame {
 
     // Lobby screen with buttons
     public void Lobby() {
-        JPanel panel = new JPanel(new BorderLayout()); // Main panel with border layout
+        // Load the background image
+        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\Lobby.png"); // Replace with your actual image path
+    
+        // Custom JPanel to draw the background image
+        JPanel panel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+    
         panel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50)); // Add padding
-        panel.setBackground(new Color(1, 18, 34)); // Set background color to #011222
-
-        JLabel titleLabel = new JLabel("Welcome to AlgoriSim", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Color.WHITE); // Ensure visibility on dark background
-
+        panel.setBackground(new Color(1, 18, 34)); // Fallback background color
+    
         // Wrapper panel to hold buttons and keep them centered
-        JPanel buttonPanel = new JPanel(new GridBagLayout()); // Centers components automatically
-        buttonPanel.setBackground(new Color(1, 18, 34)); // Match background color
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false); // Make the button panel transparent
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; // Column index
-        gbc.gridy = GridBagConstraints.RELATIVE; // Auto-increment row
-        gbc.insets = new Insets(10, 0, 10, 0); // Spacing between buttons
-        gbc.anchor = GridBagConstraints.CENTER; // Center alignment
-
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.insets = new Insets(0, 0, 25, 0);
+        gbc.anchor = GridBagConstraints.CENTER;
+    
         // Create buttons
-        JButton startButton = createStyledButton("START");
-        JButton creditsButton = createStyledButton("CREDITS");
-        JButton helpButton = createStyledButton("HELP");
-        JButton exitButton = createStyledButton("EXIT");
-
-        // Add buttons to buttonPanel with centering
+        JButton startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startDefault, CommonConstants.startClicked);
+        JButton creditsButton = createStyledButton(CommonConstants.creditsDefault, CommonConstants.creditsDefault, CommonConstants.creditsClicked);
+        JButton helpButton = createStyledButton(CommonConstants.helpDefault, CommonConstants.helpDefault, CommonConstants.helpClicked);
+        JButton exitButton = createStyledButton(CommonConstants.exitDefault, CommonConstants.exitDefault, CommonConstants.exitClicked);
+    
+        // Add buttons to buttonPanel
+        buttonPanel.add(Box.createVerticalStrut(100));
         buttonPanel.add(startButton, gbc);
         buttonPanel.add(creditsButton, gbc);
         buttonPanel.add(helpButton, gbc);
         buttonPanel.add(exitButton, gbc);
-
+    
         // Add action listeners
         exitButton.addActionListener(e -> System.exit(0));
         startButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
         creditsButton.addActionListener(e -> layout.show(mainPanel, "Credits"));
         helpButton.addActionListener(e -> layout.show(mainPanel, "Help"));
-
-        // Add components to the main panel
-        panel.add(titleLabel, BorderLayout.NORTH);
+    
         panel.add(buttonPanel, BorderLayout.CENTER);
-
+    
         mainPanel.add(panel, "Lobby");
     }
+    
 
     // Helper method for button styling
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text) {
+    private static JButton createStyledButton(String defaultIconPath, String hoverIconPath, String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+    
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+    
+        button.setIcon(defaultIcon);
+    
+        button.addMouseListener(new MouseAdapter() {
             @Override
-            protected void paintComponent(Graphics g) {
-                String colorHex;
-
-                if (getModel().isArmed()) {
-                    colorHex = "#f1ffb9";
-                } else {
-                    colorHex = "#ffffff";
-                }
-
-                Color color = Color.decode(colorHex); // Convert hex to Color
-                g.setColor(color);
-                g.fillRoundRect(0, 0, getWidth(), getHeight(), getHeight(), getHeight()); // Oblong shape
-
-                super.paintComponent(g);
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
             }
-
+    
             @Override
-            protected void paintBorder(Graphics g) {
-                g.setColor(Color.WHITE);
-                g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, getHeight(), getHeight());
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
             }
-        };
-
-        button.setPreferredSize(new Dimension(150, 40)); // Adjust button size
-        button.setContentAreaFilled(false); // Makes the button transparent
-        button.setFocusPainted(false); // Removes focus border
-        button.setBorderPainted(false); // Removes default border
-
+    
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+    
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+        });
+    
         return button;
     }
-
+    
+    // Helper method to scale an image to fit the button
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+    
+    
     public void showSelectAlgorithmScreen() {
         layout.show(mainPanel, "AlgorithmSelectionScreen");
 
