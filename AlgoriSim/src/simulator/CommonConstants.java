@@ -1,37 +1,53 @@
 import java.awt.*;
 
 public class CommonConstants {
-    // file paths
-    public static final String startDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\start_default.png";
-    public static final String startHover = "C:\\Users\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\start_hover.png";
-    public static final String startClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\start_clicked.png";
-    public static final String helpDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\help_default.png";
-    public static final String helpHover = "C:\\Users\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\help_hover.png";
-    public static final String helpClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\help_clicked.png";
-    public static final String creditsDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\credits_default.png";
-    public static final String creditsHover = "C:\\Users\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\credits_hover.png";
-    public static final String creditsClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\credits_clicked.png";
-    public static final String exitDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\exit_default.png";
-    public static final String exitHover = "C:\\Users\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\exit_hover.png";
-    public static final String exitClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\exit_clicked.png";
-    public static final String randomDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\random_default.png";
-    public static final String randomClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\random_clicked.png";
-    public static final String userinpDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\userinp_default.png";
-    public static final String userinpClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\userinp_clicked.png";
-    public static final String fileDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\file_default.png";
-    public static final String fileClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\file_clicked.png";
-    public static final String backDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\back_default.png";
-    public static final String backClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\back_clicked.png";
-    public static final String FCFSDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\FCFS_default.png";
-    public static final String FCFSClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\FCFS_clicked.png";
-    public static final String RRDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\RR_default.png";
-    public static final String RRClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\RR_clicked.png";
-    public static final String SJFPreDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFPre_default.png";
-    public static final String SJFPreClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFPre_clicked.png";
-    public static final String SJFNonDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFNon_default.png";
-    public static final String SJFNonClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\SJFNon_clicked.png";
-    public static final String PrioPreDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioPre_default.png";
-    public static final String PrioPreClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioPre_clicked.png";
-    public static final String PrioNonDefault = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioNon_default.png";
-    public static final String PrioNonClicked = "C:\\Users\\\\Eugene\\\\Desktop\\\\Git\\\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\PrioNon_clicked.png";
+    // Base directory for resources
+    private static final String BASE_PATH = "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\";
+
+    // File paths using relative paths
+    public static final String startDefault = BASE_PATH + "start_default.png";
+    public static final String startHover = BASE_PATH + "start_hover.png";
+    public static final String startClicked = BASE_PATH + "start_clicked.png";
+    
+    public static final String helpDefault = BASE_PATH + "help_default.png";
+    public static final String helpHover = BASE_PATH + "help_hover.png";
+    public static final String helpClicked = BASE_PATH + "help_clicked.png";
+    
+    public static final String creditsDefault = BASE_PATH + "credits_default.png";
+    public static final String creditsHover = BASE_PATH + "credits_hover.png";
+    public static final String creditsClicked = BASE_PATH + "credits_clicked.png";
+    
+    public static final String exitDefault = BASE_PATH + "exit_default.png";
+    public static final String exitHover = BASE_PATH + "exit_hover.png";
+    public static final String exitClicked = BASE_PATH + "exit_clicked.png";
+    
+    public static final String randomDefault = BASE_PATH + "random_default.png";
+    public static final String randomClicked = BASE_PATH + "random_clicked.png";
+    
+    public static final String userinpDefault = BASE_PATH + "userinp_default.png";
+    public static final String userinpClicked = BASE_PATH + "userinp_clicked.png";
+    
+    public static final String fileDefault = BASE_PATH + "file_default.png";
+    public static final String fileClicked = BASE_PATH + "file_clicked.png";
+    
+    public static final String backDefault = BASE_PATH + "back_default.png";
+    public static final String backClicked = BASE_PATH + "back_clicked.png";
+    
+    public static final String FCFSDefault = BASE_PATH + "FCFS_default.png";
+    public static final String FCFSClicked = BASE_PATH + "FCFS_clicked.png";
+    
+    public static final String RRDefault = BASE_PATH + "RR_default.png";
+    public static final String RRClicked = BASE_PATH + "RR_clicked.png";
+    
+    public static final String SJFPreDefault = BASE_PATH + "SJFPre_default.png";
+    public static final String SJFPreClicked = BASE_PATH + "SJFPre_clicked.png";
+    
+    public static final String SJFNonDefault = BASE_PATH + "SJFNon_default.png";
+    public static final String SJFNonClicked = BASE_PATH + "SJFNon_clicked.png";
+    
+    public static final String PrioPreDefault = BASE_PATH + "PrioPre_default.png";
+    public static final String PrioPreClicked = BASE_PATH + "PrioPre_clicked.png";
+    
+    public static final String PrioNonDefault = BASE_PATH + "PrioNon_default.png";
+    public static final String PrioNonClicked = BASE_PATH + "PrioNon_clicked.png";
 }
