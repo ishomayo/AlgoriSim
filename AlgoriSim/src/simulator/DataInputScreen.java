@@ -3,6 +3,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.*;
+
 import java.util.*;
 import java.util.List;
 
@@ -84,10 +85,15 @@ public class DataInputScreen extends JPanel  {
         return button;
     }
 
-    public void showRandomDataScreen() {
+    private void showRandomDataScreen() {
         JPanel randomDataPanel = new JPanel(new BorderLayout());
-        randomDataPanel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-
+        randomDataPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
+    
+        // Title Label
+        JLabel titleLabel = new JLabel("Generate Random Data", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+    
+        // Create Table with Uneditable Rows
         String[] columnNames = {"Process ID", "Arrival Time", "Burst Time", "Priority Number"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 3) {
             @Override
@@ -95,38 +101,52 @@ public class DataInputScreen extends JPanel  {
                 return false;
             }
         };
+    
         JTable dataTable = new JTable(tableModel);
-        dataTable.getTableHeader().setReorderingAllowed(false); // Prevent column reordering
-        JScrollPane scrollPane = new JScrollPane(dataTable);
-        randomDataPanel.add(scrollPane, BorderLayout.CENTER);
-
+        dataTable.getTableHeader().setReorderingAllowed(false);
+        JScrollPane tableScrollPane = new JScrollPane(dataTable);
+    
+        // Generate Data Button
         JButton generateButton = new JButton("Generate Data");
+    
+        // Continue Button (Initially disabled)
+        JButton continueButton = new JButton("Continue");
+        continueButton.setFont(new Font("Arial", Font.BOLD, 14));
+        continueButton.setPreferredSize(new Dimension(100, 30));
+        continueButton.setEnabled(false);
+    
+        // Generate data and validate table when clicked
         generateButton.addActionListener(e -> {
             generateRandomData(tableModel);
             validateRandomTableData(tableModel, continueButton);
         });
-
-        randomDataPanel.add(generateButton, BorderLayout.NORTH);
-
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JButton backButton = new JButton("← Back");
-        backButton.setFont(new Font("Arial", Font.BOLD, 14));
-        backButton.setPreferredSize(new Dimension(120, 40));
+    
+        // Back Button
+        JButton backButton = new JButton("←");
+        backButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        backButton.setPreferredSize(new Dimension(50, 30));
         backButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
-        bottomPanel.add(backButton, BorderLayout.WEST);
-
-        continueButton = new JButton("Continue");
-        continueButton.setFont(new Font("Arial", Font.BOLD, 14));
-        continueButton.setPreferredSize(new Dimension(120, 40));
-        continueButton.setEnabled(false);
+    
+        // Continue Button action
         continueButton.addActionListener(e -> main.showSelectAlgorithmScreen());
-        bottomPanel.add(continueButton, BorderLayout.EAST);
-
-        randomDataPanel.add(bottomPanel, BorderLayout.SOUTH);
+    
+        // Listen for table changes and update continue button accordingly
         tableModel.addTableModelListener(e -> validateRandomTableData(tableModel, continueButton));
-
+    
+        // Panel Layout
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(tableScrollPane, BorderLayout.CENTER);
+    
+        JPanel bottomPanel = new JPanel(new FlowLayout());
+        bottomPanel.add(generateButton);
+        bottomPanel.add(backButton);
+        bottomPanel.add(continueButton);
+    
+        // Add components
+        randomDataPanel.add(titleLabel, BorderLayout.NORTH);
+        randomDataPanel.add(centerPanel, BorderLayout.CENTER);
+        randomDataPanel.add(bottomPanel, BorderLayout.SOUTH);
+    
         mainPanel.add(randomDataPanel, "RandomDataScreen");
         layout.show(mainPanel, "RandomDataScreen");
     }
@@ -178,10 +198,10 @@ public class DataInputScreen extends JPanel  {
     }
 
     public void showUserInputScreen() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        panel.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Border around the panel
+        JPanel userInputPanel = new JPanel(new BorderLayout());
+        userInputPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
     
+        // Title Label
         JLabel titleLabel = new JLabel("Enter Process Data", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
     
@@ -194,18 +214,25 @@ public class DataInputScreen extends JPanel  {
             }
         };
     
-        // Initialize table with 3 rows (minimum requirement)
+        // Initialize table with 3 rows
         JTable processTable = new JTable(tableModel);
-        processTable.getTableHeader().setReorderingAllowed(false); // Prevent column reordering
-
+        processTable.getTableHeader().setReorderingAllowed(false);
+    
         for (int i = 1; i <= 3; i++) {
             tableModel.addRow(new Object[]{"P" + i, "", "", ""});
         }
     
-        JScrollPane scrollPane = new JScrollPane(processTable);
+        JScrollPane tableScrollPane = new JScrollPane(processTable);
     
         // Add Process Button
         JButton addProcessButton = new JButton("Add Process");
+    
+        // Continue Button (Initially disabled)
+        JButton continueButton = new JButton("Continue");
+        continueButton.setFont(new Font("Arial", Font.BOLD, 14));
+        continueButton.setPreferredSize(new Dimension(100, 30));
+        continueButton.setEnabled(false);
+    
         addProcessButton.addActionListener(e -> {
             int rowCount = tableModel.getRowCount();
             if (rowCount < 20) {
@@ -222,35 +249,35 @@ public class DataInputScreen extends JPanel  {
         backButton.setPreferredSize(new Dimension(50, 30));
         backButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
     
-        // Continue Button (Navigates to Algorithm Selection Screen)
-        JButton continueButton = new JButton("Continue");
-        continueButton.setFont(new Font("Arial", Font.BOLD, 14));
-        continueButton.setPreferredSize(new Dimension(100, 30));
-        continueButton.setEnabled(false); // Initially disabled
-    
+        // Continue Button Action
         continueButton.addActionListener(e -> {
             if (validateUserInputTableData(tableModel, continueButton)) {
-                saveDataToFile(tableModel); // Save data before proceeding
-                main.showSelectAlgorithmScreen(); // Proceed to the next screen
+                saveDataToFile(tableModel);
+                main.showSelectAlgorithmScreen();
             }
         });
     
-        // Create a separate panel for buttons
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        buttonPanel.add(addProcessButton);
-        buttonPanel.add(backButton);
-        buttonPanel.add(continueButton);
+        // Panel Layout
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(tableScrollPane, BorderLayout.CENTER);
     
-        panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+        JPanel bottomPanel = new JPanel(new FlowLayout());
+        bottomPanel.add(addProcessButton);
+        bottomPanel.add(backButton);
+        bottomPanel.add(continueButton);
+    
+        // Add Components
+        userInputPanel.add(titleLabel, BorderLayout.NORTH);
+        userInputPanel.add(centerPanel, BorderLayout.CENTER);
+        userInputPanel.add(bottomPanel, BorderLayout.SOUTH);
     
         // Validate table whenever data changes
         tableModel.addTableModelListener(e -> validateUserInputTableData(tableModel, continueButton));
     
-        mainPanel.add(panel, "UserInputScreen");
+        mainPanel.add(userInputPanel, "UserInputScreen");
         layout.show(mainPanel, "UserInputScreen");
     }
+    
     
     // Method to validate table data
     private boolean validateUserInputTableData(DefaultTableModel model, JButton continueButton) {

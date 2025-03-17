@@ -8,6 +8,7 @@ public class Main extends JFrame {
     protected static int width = 900, height = 600;
     private CardLayout layout = new CardLayout();
     private JPanel mainPanel = new JPanel(layout);
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -17,8 +18,8 @@ public class Main extends JFrame {
     }
 
     public Main() {
-        setTitle("AlgoriSim - CPU Scheduling Simulator");
-        setSize(width, height);
+        setSize(width, height); 
+        setUndecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
