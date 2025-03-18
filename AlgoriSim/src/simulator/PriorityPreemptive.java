@@ -1,7 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -10,6 +12,7 @@ class ProcessPriorityPreemptive {
     String processID;
     int arrivalTime, burstTime, remainingTime, completionTime, turnaroundTime, waitingTime, priority;
     boolean isCompleted = false;
+    
 
     public ProcessPriorityPreemptive(String processID, int arrivalTime, int burstTime, int priority) {
         this.processID = processID;
@@ -87,17 +90,19 @@ public class PriorityPreemptive extends JPanel {
     private List<EventPriorityPreemptive> timeline = new ArrayList<>();
     private CardLayout layout;
     private JPanel mainPanel;
+    private Image backgroundImage;
 
     public PriorityPreemptive(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        backgroundImage = new ImageIcon(CommonConstants.BG).getImage(); 
+
         this.layout = layout;
         this.mainPanel = mainPanel;
 
-        JButton homeButton = new JButton("← Home");
-        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
-        homeButton.setPreferredSize(new Dimension(100, 30));
+        JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
+        CommonConstants.homeClicked);
 
         // Home Button Action: Go back to Lobby
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
@@ -106,8 +111,11 @@ public class PriorityPreemptive extends JPanel {
         topPanel.add(new JLabel("Algorithm: Priority Scheduling Preemptive", JLabel.LEFT), BorderLayout.WEST);
         cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
         topPanel.add(homeButton, BorderLayout.WEST);
+        topPanel.setOpaque(false);
+        cpuLabel.setForeground(Color.WHITE);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
         readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
@@ -134,8 +142,10 @@ public class PriorityPreemptive extends JPanel {
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        startButton = new JButton("Start");
-        stopButton = new JButton("Stop");
+        startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
+        CommonConstants.startClicked);
+        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
+        CommonConstants.stopClicked);
         stopButton.setEnabled(false);
 
         startButton.addActionListener(e -> startSimulation());
@@ -143,11 +153,67 @@ public class PriorityPreemptive extends JPanel {
 
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
+        buttonPanel.setOpaque(false);
         totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel.setForeground(Color.WHITE);
         buttonPanel.add(totalExecutionTimeLabel);
         add(buttonPanel, BorderLayout.PAGE_END);
 
         loadProcessData();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+    private static JButton createStyledButton(String defaultIconPath, String hoverIconPath, String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+
+        button.setIcon(defaultIcon);
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+        });
+
+        return button;
+    }
+
+    // Helper method to scale an image to fit the button
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 
     private void loadProcessData() {
