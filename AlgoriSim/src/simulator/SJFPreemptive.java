@@ -96,7 +96,7 @@ public class SJFPreemptive extends JPanel {
     private JLabel cpuLabel, readyQueueLabel, totalExecutionTimeLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
-    private JButton startButton, stopButton;
+    private JButton startButton;
     private List<ProcessSJFPreemptive> processes = new ArrayList<>();
     private int currentTime = 0;
     private double avgWaitingTime = 0, avgTurnaroundTime = 0;
@@ -104,6 +104,7 @@ public class SJFPreemptive extends JPanel {
     private List<EventSJFPreemptive> timeline = new ArrayList<>();
     private CardLayout layout;
     private JPanel mainPanel;
+    private JLabel timerLabel;
 
     public SJFPreemptive(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
@@ -128,7 +129,7 @@ public class SJFPreemptive extends JPanel {
         cpuLabel.setForeground(Color.WHITE);
         topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
-        readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel = new JLabel("Algorithm: SJF Preemptive", SwingConstants.RIGHT);
         readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
@@ -163,16 +164,12 @@ public class SJFPreemptive extends JPanel {
         buttonPanel.setOpaque(false);
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
                 CommonConstants.startClicked);
-        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
-                CommonConstants.stopClicked);
-        stopButton.setEnabled(false);
 
         startButton.addActionListener(e -> startSimulation());
-        stopButton.addActionListener(e -> stopSimulation());
+
 
         buttonPanel.add(startButton);
-        buttonPanel.add(stopButton);
-        totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel = new JLabel(" ");
         totalExecutionTimeLabel.setForeground(Color.WHITE);
         buttonPanel.add(totalExecutionTimeLabel);
         add(buttonPanel, BorderLayout.PAGE_END);
@@ -285,7 +282,6 @@ public class SJFPreemptive extends JPanel {
 
     private void startSimulation() {
         startButton.setEnabled(false);
-        stopButton.setEnabled(true);
         currentTime = 0;
         avgWaitingTime = 0;
         avgTurnaroundTime = 0;
@@ -313,10 +309,10 @@ public class SJFPreemptive extends JPanel {
             if (eventIndex[0] < timeline.size()) {
                 ganttChartPanel.setTimeline(timeline.subList(0, eventIndex[0] + 1));
                 cpuLabel.setText("CPU: " + timeline.get(eventIndex[0]).processName);
+                ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + timeline.get(eventIndex[0]).finishTime + " ms"));
                 eventIndex[0]++;
             } else {
                 simulationTimer.stop();
-                stopButton.setEnabled(false);
                 startButton.setEnabled(true);
             }
         });
@@ -391,7 +387,6 @@ public class SJFPreemptive extends JPanel {
 
     private void stopSimulation() {
         startButton.setEnabled(true);
-        stopButton.setEnabled(false);
         if (simulationTimer != null) {
             simulationTimer.stop();
         }
@@ -400,6 +395,8 @@ public class SJFPreemptive extends JPanel {
         if (executingProcess != null) {
             timeline.add(new EventSJFPreemptive(executingProcess.processID, lastSwitchTime, currentTime));
         }
+
+        timerLabel.setText("Time: 0 ms");
 
         ganttChartPanel.setTimeline(timeline);
         updateTable();
@@ -464,21 +461,29 @@ public class SJFPreemptive extends JPanel {
         avgWaitingTime = 0;
         avgTurnaroundTime = 0;
 
+        tableModel.setRowCount(0); // Clear the table before updating
+
         for (ProcessSJFPreemptive p : processes) {
             avgWaitingTime += p.waitingTime;
             avgTurnaroundTime += p.turnaroundTime;
+
+            tableModel.addRow(new Object[] {
+                    p.processID, p.burstTime, p.arrivalTime,
+                    p.waitingTime, p.turnaroundTime, "-", "-" // No per-row averages
+            });
         }
 
         avgWaitingTime /= processes.size();
         avgTurnaroundTime /= processes.size();
 
-        tableModel.setRowCount(0);
-        for (ProcessSJFPreemptive p : processes) {
-            tableModel.addRow(new Object[] {
-                    p.processID, p.burstTime, p.arrivalTime,
-                    p.waitingTime, p.turnaroundTime, avgWaitingTime, avgTurnaroundTime
-            });
-        }
+        // Format averages to two decimal places
+        String formattedAvgWaitingTime = String.format("%.2f", avgWaitingTime);
+        String formattedAvgTurnaroundTime = String.format("%.2f", avgTurnaroundTime);
+
+        // Add summary row for averages
+        tableModel.addRow(new Object[] {
+                "Average", "-", "-", "-", "-", formattedAvgWaitingTime, formattedAvgTurnaroundTime
+        });
     }
 
 }

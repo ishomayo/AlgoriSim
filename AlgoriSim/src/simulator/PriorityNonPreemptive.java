@@ -79,7 +79,7 @@ public class PriorityNonPreemptive extends JPanel {
     private JLabel cpuLabel, readyQueueLabel, totalExecutionTimeLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
-    private JButton startButton, stopButton;
+    private JButton startButton;
     private List<ProcessPriorityNonPreemptive> processes = new ArrayList<>();
     private CustomPanelPriorityNonPreemptive ganttChartPanel;
     private List<EventPriorityNonPreemptive> timeline = new ArrayList<>();
@@ -97,18 +97,18 @@ public class PriorityNonPreemptive extends JPanel {
         this.mainPanel = mainPanel;
 
         JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
-        CommonConstants.homeClicked);
+                CommonConstants.homeClicked);
 
         // Home Button Action: Go back to Lobby
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(new JLabel("Algorithm: Priority Scheduling Non-Preemptive", JLabel.LEFT), BorderLayout.WEST);
-        cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        topPanel.add(new JLabel(" ", JLabel.LEFT), BorderLayout.WEST);
+        cpuLabel = new JLabel("Algorithm: Priority Scheduling Non-Preemptive", SwingConstants.CENTER);
         cpuLabel.setForeground(Color.WHITE);
         topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
-        readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel = new JLabel(" ", SwingConstants.RIGHT);
         readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
         topPanel.setOpaque(false);
@@ -139,17 +139,12 @@ public class PriorityNonPreemptive extends JPanel {
 
         JPanel buttonPanel = new JPanel();
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
-        CommonConstants.startClicked);
-        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
-        CommonConstants.stopClicked);
-        stopButton.setEnabled(false);
+                CommonConstants.startClicked);
 
         startButton.addActionListener(e -> startSimulation());
-        stopButton.addActionListener(e -> stopSimulation());
 
         buttonPanel.add(startButton);
-        buttonPanel.add(stopButton);
-        totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel = new JLabel(" ");
         totalExecutionTimeLabel.setForeground(Color.WHITE);
         buttonPanel.add(totalExecutionTimeLabel);
         buttonPanel.setOpaque(false);
@@ -264,7 +259,6 @@ public class PriorityNonPreemptive extends JPanel {
 
     private void startSimulation() {
         startButton.setEnabled(false);
-        stopButton.setEnabled(true);
         timeline.clear();
         ganttChartPanel.repaint();
 
@@ -276,24 +270,51 @@ public class PriorityNonPreemptive extends JPanel {
         processes.sort(Comparator.comparingInt((ProcessPriorityNonPreemptive p) -> p.arrivalTime)
                 .thenComparingInt(p -> p.priority));
 
-        int currentTime = 0;
-        for (ProcessPriorityNonPreemptive p : processes) {
-            if (currentTime < p.arrivalTime) {
-                currentTime = p.arrivalTime;
+        SwingWorker<Void, EventPriorityNonPreemptive> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                int currentTime = 0;
+                for (ProcessPriorityNonPreemptive p : processes) {
+                    if (currentTime < p.arrivalTime) {
+                        currentTime = p.arrivalTime;
+                    }
+
+                    int startTime = currentTime;
+                    int finishTime = currentTime + p.burstTime;
+                    EventPriorityNonPreemptive event = new EventPriorityNonPreemptive(p.processID, startTime,
+                            finishTime);
+                    timeline.add(event);
+                    publish(event);
+
+                    p.completionTime = finishTime;
+                    p.turnaroundTime = p.completionTime - p.arrivalTime;
+                    p.waitingTime = p.turnaroundTime - p.burstTime;
+
+                    currentTime = finishTime;
+                    Thread.sleep(1000); // Simulate execution delay
+                }
+                return null;
             }
 
-            int startTime = currentTime;
-            int finishTime = currentTime + p.burstTime;
-            timeline.add(new EventPriorityNonPreemptive(p.processID, startTime, finishTime));
+            @Override
+            protected void process(List<EventPriorityNonPreemptive> chunks) {
+                ganttChartPanel.setTimeline(new ArrayList<>(timeline));
+                updateTable();
+            }
 
-            p.completionTime = finishTime;
-            p.turnaroundTime = p.completionTime - p.arrivalTime;
-            p.waitingTime = p.turnaroundTime - p.burstTime;
+            @Override
+            protected void done() {
+                ganttChartPanel.setBorder(BorderFactory.createTitledBorder(
+                        "Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
 
-            currentTime = finishTime;
-        }
+                startButton.setEnabled(true);
+            }
+        };
 
-        ganttChartPanel.setTimeline(timeline);
+        startButton.setEnabled(false);
+        timeline.clear();
+        ganttChartPanel.repaint();
+        worker.execute();
     }
 
     private void updateTable() {
@@ -307,12 +328,11 @@ public class PriorityNonPreemptive extends JPanel {
                     p.turnaroundTime });
         }
 
-        totalExecutionTimeLabel
-                .setText("Total Execution Time: " + timeline.get(timeline.size() - 1).finishTime + " ms");
+        ganttChartPanel.setBorder(BorderFactory.createTitledBorder(
+                        "Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
     }
 
     private void stopSimulation() {
         startButton.setEnabled(true);
-        stopButton.setEnabled(false);
     }
 }

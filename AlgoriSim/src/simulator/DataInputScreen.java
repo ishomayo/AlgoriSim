@@ -73,7 +73,8 @@ public class DataInputScreen extends JPanel {
         buttonPanel.add(userInputButton);
         buttonPanel.add(fileInputButton);
 
-        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked,
+                CommonConstants.backClicked);
 
         JPanel backPanel = new JPanel();
         backPanel.add(backButton);
@@ -202,10 +203,12 @@ public class DataInputScreen extends JPanel {
         JScrollPane tableScrollPane = new JScrollPane(dataTable);
 
         // Generate Data Button
-        JButton generateButton = createStyledButton(CommonConstants.genDefault, CommonConstants.genHover, CommonConstants.genClicked);
+        JButton generateButton = createStyledButton(CommonConstants.genDefault, CommonConstants.genHover,
+                CommonConstants.genClicked);
 
         // Continue Button (Initially disabled)
-        JButton continueButton = createStyledButton(CommonConstants.contDefault, CommonConstants.contHover, CommonConstants.contClicked);
+        JButton continueButton = createStyledButton(CommonConstants.contDefault, CommonConstants.contHover,
+                CommonConstants.contClicked);
         continueButton.setEnabled(false);
 
         // Generate data and validate table when clicked
@@ -215,7 +218,8 @@ public class DataInputScreen extends JPanel {
         });
 
         // Back Button
-        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked,
+                CommonConstants.backClicked);
 
         backButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
 
@@ -294,12 +298,12 @@ public class DataInputScreen extends JPanel {
 
     public void showUserInputScreen() {
         checker = 2;
-    
+
         // Load background image
         ImageIcon backgroundImage = new ImageIcon(CommonConstants.UserDBG); // Replace with your image file
         JLabel backgroundLabel = new JLabel(backgroundImage);
         backgroundLabel.setLayout(new BorderLayout());
-    
+
         // Create custom JPanel to paint background
         JPanel userInputPanel = new JPanel(new BorderLayout()) {
             @Override
@@ -309,12 +313,12 @@ public class DataInputScreen extends JPanel {
             }
         };
         userInputPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
-    
+
         // Title Label
         JLabel titleLabel = new JLabel(" ", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(Color.WHITE); // Ensure visibility over background
-    
+
         // Table Model (Process ID, Arrival Time, Burst Time, Priority Number)
         String[] columnNames = { "Process ID", "Arrival Time", "Burst Time", "Priority Number" };
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -323,25 +327,27 @@ public class DataInputScreen extends JPanel {
                 return column != 0; // Process ID column should NOT be editable
             }
         };
-    
+
         // Initialize table with 3 rows
         JTable processTable = new JTable(tableModel);
         processTable.getTableHeader().setReorderingAllowed(false);
-    
+
         for (int i = 1; i <= 3; i++) {
             tableModel.addRow(new Object[] { "P" + i, "", "", "" });
         }
-    
+
         JScrollPane tableScrollPane = new JScrollPane(processTable);
-    
+
         // Add Process Button
-        JButton addProcessButton = createStyledButton(CommonConstants.addprocDefault, CommonConstants.addprocHover, CommonConstants.addprocClicked);
-    
+        JButton addProcessButton = createStyledButton(CommonConstants.addprocDefault, CommonConstants.addprocHover,
+                CommonConstants.addprocClicked);
+
         // Continue Button (Initially disabled)
-        JButton continueButton = createStyledButton(CommonConstants.contDefault, CommonConstants.contHover, CommonConstants.contClicked);
+        JButton continueButton = createStyledButton(CommonConstants.contDefault, CommonConstants.contHover,
+                CommonConstants.contClicked);
 
         continueButton.setEnabled(false);
-    
+
         addProcessButton.addActionListener(e -> {
             int rowCount = tableModel.getRowCount();
             if (rowCount < 20) {
@@ -352,12 +358,13 @@ public class DataInputScreen extends JPanel {
             }
             validateUserInputTableData(tableModel, continueButton);
         });
-    
+
         // Back Button
-        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked,
+                CommonConstants.backClicked);
 
         backButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
-    
+
         // Continue Button Action
         continueButton.addActionListener(e -> {
             if (validateUserInputTableData(tableModel, continueButton)) {
@@ -365,29 +372,29 @@ public class DataInputScreen extends JPanel {
                 main.showSelectAlgorithmScreen();
             }
         });
-    
+
         // Panel Layout
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setOpaque(false); // Make it transparent
         centerPanel.add(tableScrollPane, BorderLayout.CENTER);
-    
+
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.setOpaque(false); // Make it transparent
         bottomPanel.add(addProcessButton);
         bottomPanel.add(backButton);
         bottomPanel.add(continueButton);
-    
+
         // Add Components
         userInputPanel.add(titleLabel, BorderLayout.NORTH);
         userInputPanel.add(centerPanel, BorderLayout.CENTER);
         userInputPanel.add(bottomPanel, BorderLayout.SOUTH);
-    
+
         // Validate table whenever data changes
         tableModel.addTableModelListener(e -> validateUserInputTableData(tableModel, continueButton));
-    
+
         mainPanel.add(userInputPanel, "UserInputScreen");
         layout.show(mainPanel, "UserInputScreen");
-    }    
+    }
 
     // Method to validate table data
     private boolean validateUserInputTableData(DefaultTableModel model, JButton continueButton) {
@@ -455,12 +462,12 @@ public class DataInputScreen extends JPanel {
 
     private void showFileInputScreen() {
         checker = 3;
-    
+
         // Load background image
         ImageIcon backgroundImage = new ImageIcon(CommonConstants.FileBG); // Replace with your image file
         JLabel backgroundLabel = new JLabel(backgroundImage);
         backgroundLabel.setLayout(new BorderLayout());
-    
+
         // Create custom JPanel to paint background
         JPanel filePanel = new JPanel(new BorderLayout()) {
             @Override
@@ -470,11 +477,11 @@ public class DataInputScreen extends JPanel {
             }
         };
         filePanel.setBorder(new EmptyBorder(50, 50, 50, 50));
-    
+
         JLabel titleLabel = new JLabel(" ", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(Color.WHITE); // Ensure visibility over background
-    
+
         // Create Table with Uneditable Rows
         String[] columnNames = { "Process ID", "Arrival Time", "Burst Time", "Priority Number" };
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) { // Set initial row count to 0
@@ -483,53 +490,54 @@ public class DataInputScreen extends JPanel {
                 return false; // Make table uneditable
             }
         };
-    
+
         JTable table = new JTable(model);
         table.getTableHeader().setReorderingAllowed(false);
         JScrollPane tableScrollPane = new JScrollPane(table);
-    
+
         // Buttons
-        JButton chooseFileButton = createStyledButton(CommonConstants.chooseDefault, CommonConstants.chooseHover, CommonConstants.chooseClicked);
-        JButton continueButton = createStyledButton(CommonConstants.contDefault, CommonConstants.contHover, CommonConstants.contClicked);
-        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
-    
+        JButton chooseFileButton = createStyledButton(CommonConstants.chooseDefault, CommonConstants.chooseHover,
+                CommonConstants.chooseClicked);
+        JButton continueButton = createStyledButton(CommonConstants.contDefault, CommonConstants.contHover,
+                CommonConstants.contClicked);
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked,
+                CommonConstants.backClicked);
+
         continueButton.setEnabled(false); // Initially disabled
-    
+
         // Load file and enable continueButton when data is present
         chooseFileButton.addActionListener(e -> loadFileData(model, continueButton));
-    
-    
+
         backButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
-    
+
         // Continue Button action
         continueButton.addActionListener(e -> {
             saveTableData(model); // Save table data first
             main.showSelectAlgorithmScreen(); // Then switch to the algorithm selection screen
-        });        
-    
+        });
+
         // Listen for table changes and update continue button
         model.addTableModelListener(e -> updateContinueButtonState(model, continueButton));
-    
+
         // Panel Layout
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setOpaque(false); // Make it transparent
         centerPanel.add(tableScrollPane, BorderLayout.CENTER);
-    
+
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.setOpaque(false); // Make it transparent
         bottomPanel.add(chooseFileButton);
         bottomPanel.add(backButton);
         bottomPanel.add(continueButton);
-    
+
         // Add components
         filePanel.add(titleLabel, BorderLayout.NORTH);
         filePanel.add(centerPanel, BorderLayout.CENTER);
         filePanel.add(bottomPanel, BorderLayout.SOUTH);
-    
+
         mainPanel.add(filePanel, "FileInputScreen");
         layout.show(mainPanel, "FileInputScreen");
     }
-    
 
     // ===============================
     // 🔹 Method to Load File Data into Table
@@ -588,14 +596,11 @@ public class DataInputScreen extends JPanel {
             for (int i = 0; i < model.getRowCount(); i++) {
                 writer.write( // Process ID (P1, P2, P3...)
                         model.getValueAt(i, 1) + " " + // Arrival Time
-                        model.getValueAt(i, 2) + " " + // Burst Time
-                        model.getValueAt(i, 3)); // Priority Number
+                                model.getValueAt(i, 2) + " " + // Burst Time
+                                model.getValueAt(i, 3)); // Priority Number
                 writer.newLine();
             }
-            JOptionPane.showMessageDialog(null, "File saved successfully as file_input.txt!", "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error saving file!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

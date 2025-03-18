@@ -12,7 +12,6 @@ class ProcessPriorityPreemptive {
     String processID;
     int arrivalTime, burstTime, remainingTime, completionTime, turnaroundTime, waitingTime, priority;
     boolean isCompleted = false;
-    
 
     public ProcessPriorityPreemptive(String processID, int arrivalTime, int burstTime, int priority) {
         this.processID = processID;
@@ -44,7 +43,8 @@ class CustomPanelPriorityPreemptive extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (timeline.isEmpty()) return;
+        if (timeline.isEmpty())
+            return;
 
         int x = 30, y = 20, width = 30;
 
@@ -52,7 +52,8 @@ class CustomPanelPriorityPreemptive extends JPanel {
             EventPriorityPreemptive event = timeline.get(i);
 
             if (!processColors.containsKey(event.processName)) {
-                processColors.put(event.processName, availableColors.get(processColors.size() % availableColors.size()));
+                processColors.put(event.processName,
+                        availableColors.get(processColors.size() % availableColors.size()));
             }
 
             g.setColor(processColors.get(event.processName));
@@ -84,7 +85,7 @@ public class PriorityPreemptive extends JPanel {
     private JLabel cpuLabel, readyQueueLabel, totalExecutionTimeLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
-    private JButton startButton, stopButton;
+    private JButton startButton;
     private List<ProcessPriorityPreemptive> processes = new ArrayList<>();
     private CustomPanelPriorityPreemptive ganttChartPanel;
     private List<EventPriorityPreemptive> timeline = new ArrayList<>();
@@ -96,25 +97,25 @@ public class PriorityPreemptive extends JPanel {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        backgroundImage = new ImageIcon(CommonConstants.BG).getImage(); 
+        backgroundImage = new ImageIcon(CommonConstants.BG).getImage();
 
         this.layout = layout;
         this.mainPanel = mainPanel;
 
         JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
-        CommonConstants.homeClicked);
+                CommonConstants.homeClicked);
 
         // Home Button Action: Go back to Lobby
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JLabel("Algorithm: Priority Scheduling Preemptive", JLabel.LEFT), BorderLayout.WEST);
-        cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        cpuLabel = new JLabel("Algorithm: Priority Scheduling Preemptive", SwingConstants.CENTER);
         topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.setOpaque(false);
         cpuLabel.setForeground(Color.WHITE);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
-        readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel = new JLabel(" ", SwingConstants.RIGHT);
         readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
@@ -143,18 +144,14 @@ public class PriorityPreemptive extends JPanel {
 
         JPanel buttonPanel = new JPanel();
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
-        CommonConstants.startClicked);
-        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
-        CommonConstants.stopClicked);
-        stopButton.setEnabled(false);
+                CommonConstants.startClicked);
+        
 
         startButton.addActionListener(e -> startSimulation());
-        stopButton.addActionListener(e -> stopSimulation());
 
         buttonPanel.add(startButton);
-        buttonPanel.add(stopButton);
         buttonPanel.setOpaque(false);
-        totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel = new JLabel(" ");
         totalExecutionTimeLabel.setForeground(Color.WHITE);
         buttonPanel.add(totalExecutionTimeLabel);
         add(buttonPanel, BorderLayout.PAGE_END);
@@ -218,7 +215,7 @@ public class PriorityPreemptive extends JPanel {
 
     private void loadProcessData() {
         String filename;
-    
+
         switch (DataInputScreen.checker) {
             case 1:
                 filename = "random_data.txt";
@@ -233,17 +230,18 @@ public class PriorityPreemptive extends JPanel {
                 JOptionPane.showMessageDialog(this, "Invalid data source!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         }
-    
+
         readFileAndLoadProcesses(filename);
     }
-    
+
     private void readFileAndLoadProcesses(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 4) continue;
-    
+                if (data.length < 4)
+                    continue;
+
                 try {
                     processes.add(new ProcessPriorityPreemptive(
                             data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3])));
@@ -255,18 +253,17 @@ public class PriorityPreemptive extends JPanel {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }    
+    }
 
     private void displayProcesses() {
         tableModel.setRowCount(0);
         for (ProcessPriorityPreemptive p : processes) {
-            tableModel.addRow(new Object[]{p.processID, p.burstTime, p.arrivalTime, p.priority, "-", "-"});
+            tableModel.addRow(new Object[] { p.processID, p.burstTime, p.arrivalTime, p.priority, "-", "-" });
         }
     }
 
     private void startSimulation() {
         startButton.setEnabled(false);
-        stopButton.setEnabled(true);
         timeline.clear();
         ganttChartPanel.repaint();
 
@@ -275,11 +272,10 @@ public class PriorityPreemptive extends JPanel {
             p.isCompleted = false;
         }
 
-        precomputePriorityPreemptive();
-        updateTable();
+        new Thread(() -> runPriorityPreemptive()).start();
     }
 
-    private void precomputePriorityPreemptive() {
+    private void runPriorityPreemptive() {
         List<ProcessPriorityPreemptive> queue = new ArrayList<>();
         int currentTime = 0;
         int completedProcesses = 0;
@@ -296,11 +292,16 @@ public class PriorityPreemptive extends JPanel {
 
             if (!queue.isEmpty()) {
                 ProcessPriorityPreemptive current = queue.get(0);
-                int executionTime = 1;
+                int executionTime = Math.min(3, current.remainingTime); // Execute for 3-time units or remaining time
                 timeline.add(new EventPriorityPreemptive(current.processID, currentTime, currentTime + executionTime));
 
                 current.remainingTime -= executionTime;
                 currentTime += executionTime;
+
+                SwingUtilities.invokeLater(() -> {
+                    ganttChartPanel.setTimeline(new ArrayList<>(timeline));
+                    updateTable();
+                });
 
                 if (current.remainingTime == 0) {
                     current.isCompleted = true;
@@ -313,21 +314,30 @@ public class PriorityPreemptive extends JPanel {
             } else {
                 currentTime++;
             }
+
+            try {
+                Thread.sleep(500); // Adjust speed of execution simulation (500ms per step)
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-        ganttChartPanel.setTimeline(timeline);
-        updateTable();
+        SwingUtilities.invokeLater(() -> {
+            updateTable();
+            startButton.setEnabled(true); // Re-enable start button after simulation
+        });
+
     }
 
     private void updateTable() {
         tableModel.setRowCount(0);
         for (ProcessPriorityPreemptive p : processes) {
-            tableModel.addRow(new Object[]{p.processID, p.burstTime, p.arrivalTime, p.priority, p.waitingTime, p.turnaroundTime});
-        }
-        totalExecutionTimeLabel.setText("Total Execution Time: " + timeline.get(timeline.size() - 1).finishTime + " ms");
+            tableModel.addRow(new Object[] { p.processID, p.burstTime, p.arrivalTime, p.priority, p.waitingTime,
+                    p.turnaroundTime });
+        }    
+        ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
     }
 
     private void stopSimulation() {
         startButton.setEnabled(true);
-        stopButton.setEnabled(false);
     }
 }

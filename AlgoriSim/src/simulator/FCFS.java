@@ -102,7 +102,7 @@ public class FCFS extends JPanel {
     private JLabel cpuLabel, readyQueueLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
-    private JButton startButton, stopButton;
+    private JButton startButton;
     private Timer timer;
     private List<Process> processes = new ArrayList<>();
     private int currentTime = 0, index = 0;
@@ -179,7 +179,7 @@ public class FCFS extends JPanel {
 
         ganttChartPanel = new CustomPanel();
         ganttChartPanel.setPreferredSize(new Dimension(700, 75));
-        ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart"));
+        ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: 0 ms"));
         ganttChartPanel.setBackground(Color.WHITE);
         JScrollPane ganttScrollPane = new JScrollPane(ganttChartPanel);
 
@@ -194,18 +194,13 @@ public class FCFS extends JPanel {
 
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
         CommonConstants.startClicked);
-        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
-        CommonConstants.stopClicked);
-        stopButton.setEnabled(false);
-
+        
         startButton.addActionListener(e -> startSimulation());
-        stopButton.addActionListener(e -> stopSimulation());
 
         timerLabel = new JLabel("Running Time: 0 ms");
         timerLabel.setForeground(Color.WHITE);
 
         buttonPanel.add(startButton);
-        buttonPanel.add(stopButton);
         buttonPanel.add(timerLabel);
 
         bgPanel.add(buttonPanel, BorderLayout.PAGE_END);
@@ -326,7 +321,6 @@ public class FCFS extends JPanel {
 
     private void startSimulation() {
         startButton.setEnabled(false);
-        stopButton.setEnabled(true);
         index = 0;
         currentTime = 0;
         avgWaitingTime = 0;
@@ -343,7 +337,6 @@ public class FCFS extends JPanel {
             timer = null;
         }
         startButton.setEnabled(true);
-        stopButton.setEnabled(false);
     }
 
     private void runFCFS() {
@@ -364,6 +357,7 @@ public class FCFS extends JPanel {
 
         // Update the running timer
         timerLabel.setText("Running Time: " + currentTime + " ms");
+        ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + currentTime + " ms"));
 
         updateUI(p);
         index++;

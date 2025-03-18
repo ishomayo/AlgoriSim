@@ -80,7 +80,7 @@ public class RoundRobin extends JPanel {
     private JLabel cpuLabel, readyQueueLabel, totalExecutionTimeLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
-    private JButton startButton, stopButton;
+    private JButton startButton;
     private JTextField quantumField;
     private List<ProcessRR> processes = new ArrayList<>();
     private int currentTime = 0, timeQuantum;
@@ -90,30 +90,32 @@ public class RoundRobin extends JPanel {
     private CardLayout layout;
     private JPanel mainPanel;
     private Image backgroundImage;
+    private int simulationTime = 0;
+    private JLabel simulationTimeLabel;
 
     public RoundRobin(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        backgroundImage = new ImageIcon(CommonConstants.BG).getImage(); 
+        backgroundImage = new ImageIcon(CommonConstants.BG).getImage();
 
         this.layout = layout;
         this.mainPanel = mainPanel;
 
         JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
-        CommonConstants.homeClicked);
+                CommonConstants.homeClicked);
 
         // Home Button Action: Go back to Lobby
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JLabel("Algorithm: Round Robin", JLabel.LEFT), BorderLayout.WEST);
-        cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        cpuLabel = new JLabel("Algorithm: Round Robin", SwingConstants.CENTER);
         topPanel.setOpaque(false);
         cpuLabel.setForeground(Color.WHITE);
         topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
-        readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel = new JLabel(" ", SwingConstants.RIGHT);
         readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
@@ -143,23 +145,20 @@ public class RoundRobin extends JPanel {
 
         JPanel buttonPanel = new JPanel();
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
-        CommonConstants.startClicked);
-        stopButton =createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
-        CommonConstants.stopClicked);
-        stopButton.setEnabled(false);
+                CommonConstants.startClicked);
+
         JLabel quantumLabel = new JLabel("Time Quantum:");
+        quantumLabel.setForeground(Color.WHITE);
         quantumField = new JTextField("2", 5);
 
         startButton.addActionListener(e -> startSimulation());
-        stopButton.addActionListener(e -> stopSimulation());
 
         buttonPanel.add(quantumLabel);
         buttonPanel.add(quantumField);
         buttonPanel.add(startButton);
-        buttonPanel.add(stopButton);
-        
+
         buttonPanel.setOpaque(false);
-        totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel = new JLabel(" ");
         totalExecutionTimeLabel.setForeground(Color.WHITE);
         buttonPanel.add(totalExecutionTimeLabel);
         add(buttonPanel, BorderLayout.PAGE_END);
@@ -223,7 +222,7 @@ public class RoundRobin extends JPanel {
 
     private void loadProcessData() {
         String filename;
-    
+
         switch (DataInputScreen.checker) {
             case 1:
                 filename = "random_data.txt";
@@ -238,31 +237,32 @@ public class RoundRobin extends JPanel {
                 JOptionPane.showMessageDialog(this, "Invalid data source!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         }
-    
+
         readFileAndLoadProcesses(filename);
     }
-    
+
     private void readFileAndLoadProcesses(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 3) continue;
-    
+                if (data.length < 3)
+                    continue;
+
                 try {
                     processes.add(new ProcessRR(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid number format in file: " + filename);
                 }
             }
-    
+
             // Sort processes by arrival time
             processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
             displayProcesses();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }    
+    }
 
     private void displayProcesses() {
         tableModel.setRowCount(0);
@@ -273,30 +273,44 @@ public class RoundRobin extends JPanel {
 
     private void startSimulation() {
         startButton.setEnabled(false);
-        stopButton.setEnabled(true);
         currentTime = 0;
+        simulationTime = 0;
         timeline.clear();
-        ganttChartPanel.repaint();
+        ganttChartPanel.setTimeline(timeline);
         readyQueue.clear();
 
         timeQuantum = Integer.parseInt(quantumField.getText());
         List<ProcessRR> remainingProcesses = new ArrayList<>(processes);
 
-        while (!remainingProcesses.isEmpty() || !readyQueue.isEmpty()) {
-            while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {
-                readyQueue.add(remainingProcesses.remove(0));
-            }
+        // Add arriving processes at time 0
+        while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {
+            readyQueue.add(remainingProcesses.remove(0));
+        }
 
-            if (readyQueue.isEmpty()) {
-                timeline.add(new EventRR("Idle", currentTime, remainingProcesses.get(0).arrivalTime));
-                currentTime = remainingProcesses.get(0).arrivalTime;
-                continue;
-            }
+        simulationTimer = new Timer(500, e -> processNextQuantum(remainingProcesses)); // 500ms per step
+        simulationTimer.start();
+    }
 
+    private void processNextQuantum(List<ProcessRR> remainingProcesses) {
+        if (readyQueue.isEmpty() && remainingProcesses.isEmpty()) {
+            simulationTimer.stop();
+            stopSimulation();
+            return;
+        }
+
+        // Add new arriving processes to ready queue
+        while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {
+            readyQueue.add(remainingProcesses.remove(0));
+        }
+
+        if (readyQueue.isEmpty()) {
+            timeline.add(new EventRR("Idle", currentTime, currentTime + 1));
+            currentTime++;
+        } else {
             ProcessRR executingProcess = readyQueue.poll();
             int executionTime = Math.min(timeQuantum, executingProcess.remainingTime);
-            timeline.add(new EventRR(executingProcess.processID, currentTime, currentTime + executionTime));
 
+            timeline.add(new EventRR(executingProcess.processID, currentTime, currentTime + executionTime));
             executingProcess.remainingTime -= executionTime;
             currentTime += executionTime;
 
@@ -308,14 +322,15 @@ public class RoundRobin extends JPanel {
                 executingProcess.waitingTime = executingProcess.turnaroundTime - executingProcess.burstTime;
             }
         }
+        ganttChartPanel
+                .setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + currentTime + " ms"));
 
+        // Update Gantt Chart Dynamically
         ganttChartPanel.setTimeline(timeline);
-        stopSimulation();
     }
 
     private void stopSimulation() {
         startButton.setEnabled(true);
-        stopButton.setEnabled(false);
         updateTable();
     }
 
@@ -336,8 +351,11 @@ public class RoundRobin extends JPanel {
         double avgWaitingTime = (processCount > 0) ? totalWaitingTime / processCount : 0;
         double avgTurnaroundTime = (processCount > 0) ? totalTurnaroundTime / processCount : 0;
 
+        String formattedAvgWaitingTime = String.format("%.2f", avgWaitingTime);
+        String formattedAvgTurnaroundTime = String.format("%.2f", avgTurnaroundTime);
+
         // Add the averages row
-        tableModel.addRow(new Object[] { "Averages", "-", "-", "-", "-", avgWaitingTime, avgTurnaroundTime });
+        tableModel.addRow(new Object[] { "Averages", "-", "-", "-", "-", formattedAvgWaitingTime, formattedAvgTurnaroundTime });
     }
 
 }
