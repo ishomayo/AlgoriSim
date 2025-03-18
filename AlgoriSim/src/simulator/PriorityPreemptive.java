@@ -122,9 +122,10 @@ public class PriorityPreemptive extends JPanel {
 
         String[] columnNames = {
                 "Process ID", "Burst Time", "Arrival Time", "Priority",
-                "Waiting Time", "Turnaround Time"
+                "Waiting Time", "Turnaround Time", "Avg Waiting Time", "Avg Turnaround Time"
         };
         tableModel = new DefaultTableModel(columnNames, 0);
+
         processTable = new JTable(tableModel);
 
         JScrollPane tableScrollPane = new JScrollPane(processTable);
@@ -145,7 +146,6 @@ public class PriorityPreemptive extends JPanel {
         JPanel buttonPanel = new JPanel();
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
                 CommonConstants.startClicked);
-        
 
         startButton.addActionListener(e -> startSimulation());
 
@@ -329,12 +329,34 @@ public class PriorityPreemptive extends JPanel {
     }
 
     private void updateTable() {
+        int totalWaitingTime = 0;
+        int totalTurnaroundTime = 0;
+        int processCount = processes.size();
+
         tableModel.setRowCount(0);
+
         for (ProcessPriorityPreemptive p : processes) {
-            tableModel.addRow(new Object[] { p.processID, p.burstTime, p.arrivalTime, p.priority, p.waitingTime,
-                    p.turnaroundTime });
-        }    
-        ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
+            tableModel.addRow(new Object[] {
+                    p.processID, p.burstTime, p.arrivalTime, p.priority,
+                    p.waitingTime, p.turnaroundTime, "", "" // Empty columns for AWT & ATT
+            });
+            totalWaitingTime += p.waitingTime;
+            totalTurnaroundTime += p.turnaroundTime;
+        }
+
+        // Compute averages
+        double averageWaitingTime = (double) totalWaitingTime / processCount;
+        double averageTurnaroundTime = (double) totalTurnaroundTime / processCount;
+
+        // Add summary row at the bottom
+        tableModel.addRow(new Object[] {
+                "Average", "-", "-", "-", "-", "-",
+                String.format("%.2f", averageWaitingTime), String.format("%.2f", averageTurnaroundTime)
+        });
+
+        // Update Gantt Chart Label
+        ganttChartPanel.setBorder(BorderFactory.createTitledBorder(
+                "Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
     }
 
     private void stopSimulation() {
