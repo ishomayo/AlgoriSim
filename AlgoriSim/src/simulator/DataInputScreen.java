@@ -586,7 +586,7 @@ public class DataInputScreen extends JPanel {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < model.getRowCount(); i++) {
-                writer.write("P" + (i + 1) + " " + // Process ID (P1, P2, P3...)
+                writer.write( // Process ID (P1, P2, P3...)
                         model.getValueAt(i, 1) + " " + // Arrival Time
                         model.getValueAt(i, 2) + " " + // Burst Time
                         model.getValueAt(i, 3)); // Priority Number
