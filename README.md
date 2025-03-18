@@ -52,13 +52,13 @@ The application expects input files to be formatted as follows:
 19 20 19 
 ```
 This will read as: <br/>
-
+```
 Arrival Time  Burst Time  Priority <br/>
 26            17         1  <br/>
 27            3          14  <br/>
 28            21         17  <br/>
 19            20         19  <br/>
-
+```
 # Features
 * **Graphical Interface:** Intuitive UI using Java Swing.
 * **Scheduling Algorithms:** Simulates FCFS, RR, SJF (Preemptive & Non-Preemptive), Priority Scheduling (Preemptive & Non-Preemptive).
