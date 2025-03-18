@@ -1,6 +1,9 @@
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class InfoScreens {
     private CardLayout layout;
@@ -13,69 +16,91 @@ public class InfoScreens {
     }
 
     // Credits screen
+    class BackgroundPanel extends JPanel {
+        private Image backgroundImage;
+    
+        public BackgroundPanel(String imagePath) {
+            this.backgroundImage = new ImageIcon(imagePath).getImage();
+            setLayout(new BorderLayout()); // Allow adding components
+        }
+    
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+    
     public void showCredits() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new BackgroundPanel(CommonConstants.credits); // Change to your image path
+    
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
 
-        JLabel titleLabel = new JLabel("Credits", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-
-        JTextArea creditsText = new JTextArea(
-                "AlgoriSim - CPU Scheduling Algorithm Simulator\n" +
-                "Developed by: Eugene, Euvan, and Matthew\n" +
-                "Version: 1.0\n\n" +
-                "Special Thanks:\n" +
-                "- Ms. Therese Nuelle Roca\n" +
-                "- Class of CMSC 125-M Operating Systems (SS 2024-2025)\n"
-        );
-        creditsText.setEditable(false);
-        creditsText.setFont(new Font("Arial", Font.PLAIN, 16));
-        creditsText.setWrapStyleWord(true);
-        creditsText.setLineWrap(true);
-
-        JButton backButton = new JButton("BACK");
         backButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
-
-        panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(new JScrollPane(creditsText), BorderLayout.CENTER);
+    
         panel.add(backButton, BorderLayout.SOUTH);
-        panel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
         mainPanel.add(panel, "Credits");
     }
-
-    // Help screen
+    
     public void showHelp() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new BackgroundPanel(CommonConstants.help); // Change to your image path
+    
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
 
-        JLabel titleLabel = new JLabel("Help - How to Use", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-
-        JTextArea helpText = new JTextArea(
-                "Welcome to AlgoriSim - CPU Scheduling Simulator!\n\n" +
-                "How to use:\n" +
-                "1. Click 'START' to begin.\n" +
-                "2. Choose how to input data (Random, User Input, or File).\n" +
-                "3. Select a CPU Scheduling Algorithm:\n" +
-                "   - First Come First Serve (FCFS)\n" +
-                "   - Shortest Job First (SJF)\n" +
-                "   - Round Robin (RR)\n" +
-                "   - Priority Scheduling\n" +
-                "4. View the simulation results and performance metrics.\n\n" +
-                "For more details, refer to the documentation."
-        );
-        helpText.setEditable(false);
-        helpText.setFont(new Font("Arial", Font.PLAIN, 16));
-        helpText.setWrapStyleWord(true);
-        helpText.setLineWrap(true);
-
-        JButton backButton = new JButton("BACK");
         backButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
-
-        panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(new JScrollPane(helpText), BorderLayout.CENTER);
+    
         panel.add(backButton, BorderLayout.SOUTH);
-        panel.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
         mainPanel.add(panel, "Help");
+    }
+
+    // Helper method for button styling
+    private static JButton createStyledButton(String defaultIconPath, String hoverIconPath, String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+
+        button.setIcon(defaultIcon);
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+        });
+
+        return button;
+    }
+
+    // Helper method to scale an image to fit the button
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 }

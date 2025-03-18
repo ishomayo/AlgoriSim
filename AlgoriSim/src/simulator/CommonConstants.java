@@ -55,6 +55,8 @@ public class CommonConstants {
     public static final String UserDBG = BASE_PATH + "User-definedBG.jpg";
     public static final String FileBG = BASE_PATH + "FileBG.jpg";
     public static final String splash = BASE_PATH + "splash.gif";
+    public static final String help = BASE_PATH + "help.jpg";
+    public static final String credits = BASE_PATH + "credits.jpg";
 
     public static final String genDefault = BASE_PATH + "gen_default.png";
     public static final String genHover = BASE_PATH + "gen_hover.png";
