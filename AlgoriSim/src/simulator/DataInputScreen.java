@@ -13,7 +13,6 @@ import java.util.List;
 public class DataInputScreen extends JPanel {
     private JPanel mainPanel;
     private CardLayout layout;
-    private JButton continueButton; // Store as instance variable
     private Main main;
     private Image backgroundImage;
     public static int checker = 0;
@@ -22,7 +21,6 @@ public class DataInputScreen extends JPanel {
         this.main = main;
         this.layout = layout;
         this.mainPanel = mainPanel;
-        this.continueButton = continueButton;
 
         backgroundImage = new ImageIcon(
                 CommonConstants.DataInput)
@@ -62,10 +60,11 @@ public class DataInputScreen extends JPanel {
         buttonPanel.setOpaque(false);
 
         JButton randomButton = createStyledButtonDATAINPUT(CommonConstants.randomDefault,
-                CommonConstants.randomClicked);
+                CommonConstants.randomClicked, CommonConstants.randomHover);
         JButton userInputButton = createStyledButtonDATAINPUT(CommonConstants.userinpDefault,
-                CommonConstants.userinpClicked);
-        JButton fileInputButton = createStyledButtonDATAINPUT(CommonConstants.fileDefault, CommonConstants.fileClicked);
+                CommonConstants.userinpClicked, CommonConstants.userinpHover);
+        JButton fileInputButton = createStyledButtonDATAINPUT(CommonConstants.fileDefault, 
+                CommonConstants.fileClicked, CommonConstants.fileHover);
 
         buttonPanel.setBorder(new EmptyBorder(150, 0, 0, 0)); // Adjust the first value (top padding)
 
@@ -92,7 +91,7 @@ public class DataInputScreen extends JPanel {
         mainPanel.add(panel, "DataInputSelection");
     }
 
-    private static JButton createStyledButtonDATAINPUT(String defaultIconPath, String clickIconPath) {
+    private static JButton createStyledButtonDATAINPUT(String defaultIconPath, String clickIconPath, String hoverIconPath) {
         JButton button = new JButton();
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
@@ -102,11 +101,12 @@ public class DataInputScreen extends JPanel {
         // Load and scale the images
         ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
         ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
 
         button.setIcon(defaultIcon);
 
         button.addMouseListener(new MouseAdapter() {
-
+            
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setIcon(defaultIcon);
@@ -115,6 +115,15 @@ public class DataInputScreen extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 button.setIcon(clickIcon);
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
             }
         });
 
@@ -213,7 +222,7 @@ public class DataInputScreen extends JPanel {
 
         // Generate data and validate table when clicked
         generateButton.addActionListener(e -> {
-            generateRandomData(tableModel);
+            generateRandomData(tableModel, continueButton);
             validateRandomTableData(tableModel, continueButton);
         });
 
@@ -249,7 +258,7 @@ public class DataInputScreen extends JPanel {
         layout.show(mainPanel, "RandomDataScreen");
     }
 
-    private void generateRandomData(DefaultTableModel model) {
+    private void generateRandomData(DefaultTableModel model, JButton continueButton) {
         Random random = new Random();
         int numRows = random.nextInt(18) + 3;
 
@@ -284,23 +293,15 @@ public class DataInputScreen extends JPanel {
     }
 
     private void validateRandomTableData(DefaultTableModel model, JButton continueButton) {
-        if (continueButton == null) {
-            System.err.println("Error: continueButton is null");
-            return;
-        }
-
-        // Iterate through each row and column to check for empty or null cells
         for (int row = 0; row < model.getRowCount(); row++) {
             for (int col = 0; col < model.getColumnCount(); col++) {
                 Object value = model.getValueAt(row, col);
                 if (value == null || value.toString().trim().isEmpty()) {
-                    continueButton.setEnabled(false); // Disable button if empty cell found
+                    continueButton.setEnabled(false);
                     return;
                 }
             }
         }
-
-        // Enable the continueButton only if all cells are filled
         continueButton.setEnabled(true);
     }
 
@@ -602,10 +603,10 @@ public class DataInputScreen extends JPanel {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < model.getRowCount(); i++) {
-                writer.write("P" + (i + 1) + " " + // Process ID (P1, P2, P3...)
+                writer.write( "P" + (i + 1) + " " +// Process ID (P1, P2, P3...)
                         model.getValueAt(i, 1) + " " + // Arrival Time
-                        model.getValueAt(i, 2) + " " + // Burst Time
-                        model.getValueAt(i, 3)); // Priority Number
+                                model.getValueAt(i, 2) + " " + // Burst Time
+                                model.getValueAt(i, 3)); // Priority Number
                 writer.newLine();
             }
         } catch (IOException e) {

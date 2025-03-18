@@ -21,7 +21,7 @@ public class InfoScreens {
     
         public BackgroundPanel(String imagePath) {
             this.backgroundImage = new ImageIcon(imagePath).getImage();
-            setLayout(new BorderLayout()); // Allow adding components
+            //setLayout(new BorderLayout()); // Allow adding components
         }
     
         @Override
@@ -31,27 +31,76 @@ public class InfoScreens {
         }
     }
     
-    public void showCredits() {
-        JPanel panel = new BackgroundPanel(CommonConstants.credits); // Change to your image path
+    // public void showCredits() {
+    //     JPanel panel = new BackgroundPanel(CommonConstants.credits); // Change to your image path
     
-        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+    //     JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+    //     backButton.setBounds(400, 500, 150, 50);
 
+    //     backButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
+    
+    //     panel.add(backButton, BorderLayout.SOUTH);
+    //     panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
+    //     mainPanel.add(panel, "Credits");
+    // }
+
+    public void showCredits() {
+        JPanel panel = new BackgroundPanel(CommonConstants.credits); // Background panel
+        panel.setLayout(new BorderLayout()); // Set layout to BorderLayout
+    
+        // Create and style backButton
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, 
+                CommonConstants.backClicked);
+    
+        // Center button horizontally at the bottom using FlowLayout
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10)); // Centered with padding
+        buttonPanel.setOpaque(false); // Transparent background
+        buttonPanel.add(backButton);
+    
+        // Action: Go back to Lobby
         backButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
     
-        panel.add(backButton, BorderLayout.SOUTH);
+        // Add buttonPanel to the bottom of the panel
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
     
         mainPanel.add(panel, "Credits");
     }
     
-    public void showHelp() {
-        JPanel panel = new BackgroundPanel(CommonConstants.help); // Change to your image path
+    // public void showHelp() {
+    //     JPanel panel = new BackgroundPanel(CommonConstants.help); // Change to your image path
     
-        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+    //     JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked, CommonConstants.backClicked);
+    //     backButton.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Add red border
 
+    //     backButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
+    
+    //     panel.add(backButton, BorderLayout.SOUTH);
+    //     panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    
+    //     mainPanel.add(panel, "Help");
+    // }
+
+    public void showHelp() {
+        JPanel panel = new BackgroundPanel(CommonConstants.help); // Background panel
+        panel.setLayout(new BorderLayout()); // Set BorderLayout for positioning
+    
+        // Create and style backButton with red border
+        JButton backButton = createStyledButton(CommonConstants.backDefault, CommonConstants.backClicked,
+                CommonConstants.backClicked);
+        backButton.setBorder(BorderFactory.createLineBorder(Color.RED, 2)); // Add red border
+    
+        // Center button horizontally at the bottom using FlowLayout
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10)); // Centered with padding
+        buttonPanel.setOpaque(false); // Transparent background
+        buttonPanel.add(backButton);
+    
+        // Action: Go back to Lobby
         backButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
     
-        panel.add(backButton, BorderLayout.SOUTH);
+        // Add buttonPanel to the bottom of the panel
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
     
         mainPanel.add(panel, "Help");

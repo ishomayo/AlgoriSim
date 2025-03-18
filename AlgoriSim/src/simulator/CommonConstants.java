@@ -56,10 +56,13 @@ public class CommonConstants {
     public static final String exitHover = BASE_PATH + "exit_hover.png";
     public static final String exitClicked = BASE_PATH + "exit_clicked.png";
     public static final String randomDefault = BASE_PATH + "random_default.png";
+    public static final String randomHover = BASE_PATH + "random_hover.png";
     public static final String randomClicked = BASE_PATH + "random_clicked.png";
     public static final String userinpDefault = BASE_PATH + "userinp_default.png";
+    public static final String userinpHover = BASE_PATH + "userinp_hover.png";
     public static final String userinpClicked = BASE_PATH + "userinp_clicked.png";
     public static final String fileDefault = BASE_PATH + "file_default.png";
+    public static final String fileHover = BASE_PATH + "file_hover.png";
     public static final String fileClicked = BASE_PATH + "file_clicked.png";
     public static final String backDefault = BASE_PATH + "back_default.png";
     public static final String backClicked = BASE_PATH + "back_clicked.png";
