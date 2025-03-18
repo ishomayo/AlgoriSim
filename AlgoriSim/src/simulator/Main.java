@@ -41,7 +41,7 @@ public class Main extends JFrame {
     public void Lobby() {
         // Load the background image
         ImageIcon backgroundImage = new ImageIcon(
-                "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\Lobby.png");
+                CommonConstants.Lobby);
 
         // Custom JPanel to draw the background image
         JPanel panel = new JPanel(new BorderLayout()) {
@@ -182,7 +182,7 @@ public class Main extends JFrame {
         layout.show(mainPanel, "AlgorithmSelectionScreen");
 
         // Load the background image
-        ImageIcon backgroundImage = new ImageIcon("C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\User-defined Input.jpg");
+        ImageIcon backgroundImage = new ImageIcon(CommonConstants.selectBG);
 
         // Custom JPanel with background image
         JPanel algorithmPanel = new JPanel(new BorderLayout()) {

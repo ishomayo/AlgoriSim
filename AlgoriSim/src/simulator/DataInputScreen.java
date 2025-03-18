@@ -25,7 +25,7 @@ public class DataInputScreen extends JPanel {
         this.continueButton = continueButton;
 
         backgroundImage = new ImageIcon(
-                "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\DataInputScreen.jpg")
+                CommonConstants.DataInput)
                 .getImage(); // Replace with your image path
 
         showRandomDataScreen();
