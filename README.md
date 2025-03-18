@@ -37,7 +37,29 @@ javac -d bin -sourcepath src src/Main.java
 ```
 java -cp bin Main
 ```
+# Formatting the File Input 
+## (For User-defined Input from a Text File)
+The application expects input files to be formatted as follows:
+* Each line contains three space-separated integers in the following order:
+  - Arrival Time
+  - Burst Time
+  - Priority
 
+### Example File Format
+```
+26 17 1  
+27 3 14  
+28 21 17  
+19 20 19 
+```
+This will read as: <br/>
+```
+Arrival Time  Burst Time  Priority 
+26            17          1  
+27            3           14  
+28            21          17  
+19            20          19  
+```
 # Features
 * **Graphical Interface:** Intuitive UI using Java Swing.
 * **Scheduling Algorithms:** Simulates FCFS, RR, SJF (Preemptive & Non-Preemptive), Priority Scheduling (Preemptive & Non-Preemptive).
