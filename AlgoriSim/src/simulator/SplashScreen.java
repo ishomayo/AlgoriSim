@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,20 +6,20 @@ public class SplashScreen extends JWindow {
     public SplashScreen() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        JLabel splashLabel = new JLabel("Welcome to AlgoriSim", SwingConstants.CENTER);
-        splashLabel.setFont(new Font("Arial", Font.BOLD, 32));
-        splashLabel.setForeground(Color.WHITE);
+        // Load GIF
+        ImageIcon gifIcon = new ImageIcon(CommonConstants.splash); // Replace with your actual GIF file
+        Image gifImage = gifIcon.getImage().getScaledInstance(500, 300, Image.SCALE_DEFAULT);
+        ImageIcon resizedGif = new ImageIcon(gifImage);
 
-        JLabel loadingLabel = new JLabel("Loading...", SwingConstants.CENTER);
-        loadingLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-        loadingLabel.setForeground(Color.WHITE);
+        // Label to hold resized GIF
+        JLabel gifLabel = new JLabel(resizedGif);
+        gifLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        gifLabel.setVerticalAlignment(SwingConstants.CENTER);
 
-        panel.setBackground(Color.BLACK);
-        panel.add(splashLabel, BorderLayout.CENTER);
-        panel.add(loadingLabel, BorderLayout.SOUTH);
+        panel.add(gifLabel, BorderLayout.CENTER);
 
         setContentPane(panel);
-        setSize(500, 300);
+        setSize(500, 300); // Force 500x300 size
         setLocationRelativeTo(null);
     }
 
@@ -31,7 +30,7 @@ public class SplashScreen extends JWindow {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                Thread.sleep(2000); // Show for 3 seconds
+                Thread.sleep(3000); // Show for 3 seconds
                 return null;
             }
 
@@ -43,5 +42,10 @@ public class SplashScreen extends JWindow {
         };
 
         worker.execute();
+    }
+
+    public static void main(String[] args) {
+        SplashScreen splash = new SplashScreen();
+        splash.showSplash();
     }
 }

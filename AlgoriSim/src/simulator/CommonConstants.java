@@ -50,4 +50,25 @@ public class CommonConstants {
     
     public static final String PrioNonDefault = BASE_PATH + "PrioNon_default.png";
     public static final String PrioNonClicked = BASE_PATH + "PrioNon_clicked.png";
+
+    public static final String randomBG = BASE_PATH + "RandomBG.jpg";
+    public static final String UserDBG = BASE_PATH + "User-definedBG.jpg";
+    public static final String FileBG = BASE_PATH + "FileBG.jpg";
+    public static final String splash = BASE_PATH + "splash.gif";
+
+    public static final String genDefault = BASE_PATH + "gen_default.png";
+    public static final String genHover = BASE_PATH + "gen_hover.png";
+    public static final String genClicked = BASE_PATH + "gen_clicked.png";
+
+    public static final String contDefault = BASE_PATH + "cont_default.png";
+    public static final String contHover = BASE_PATH + "cont_hover.png";
+    public static final String contClicked = BASE_PATH + "cont_clicked.png";
+
+    public static final String addprocDefault = BASE_PATH + "addproc_default.png";
+    public static final String addprocHover = BASE_PATH + "addproc_hover.png";
+    public static final String addprocClicked = BASE_PATH + "addproc_clicked.png";
+
+    public static final String chooseDefault = BASE_PATH + "choose_default.png";
+    public static final String chooseHover = BASE_PATH + "choose_hover.png";
+    public static final String chooseClicked = BASE_PATH + "choose_clicked.png";
 }

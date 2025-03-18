@@ -263,37 +263,37 @@ public class Main extends JFrame {
     }
 
     private void showSimulationSJFNonPreemptive(String algorithm) {
-        SJFNonPreemptive simulationScreen = new SJFNonPreemptive(layout, null);
+        SJFNonPreemptive simulationScreen = new SJFNonPreemptive(layout, mainPanel);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
 
     private void showSimulationScreenPriorityPreemptive(String algorithm) {
-        PriorityPreemptive simulationScreen = new PriorityPreemptive(layout, null);
+        PriorityPreemptive simulationScreen = new PriorityPreemptive(layout, mainPanel);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
 
     private void showSimulationScreenFCFS(String algorithm) {
-        FCFS simulationScreen = new FCFS(layout, null);
+        FCFS simulationScreen = new FCFS(layout, mainPanel);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
 
     private void showSimulationScreenPriorityNonPreemptive(String algorithm) {
-        PriorityNonPreemptive simulationScreen = new PriorityNonPreemptive(layout, null);
+        PriorityNonPreemptive simulationScreen = new PriorityNonPreemptive(layout, mainPanel);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
 
     private void showSimulationScreenSJFPreemptive(String algorithm) {
-        SJFPreemptive simulationScreen = new SJFPreemptive(layout, null);
+        SJFPreemptive simulationScreen = new SJFPreemptive(layout, mainPanel);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }
 
     private void showSimulationScreenRoundRobin(String algorithm) {
-        RoundRobin simulationScreen = new RoundRobin();
+        RoundRobin simulationScreen = new RoundRobin(layout, mainPanel);
         mainPanel.add(simulationScreen, "SimulationScreen");
         layout.show(mainPanel, "SimulationScreen");
     }

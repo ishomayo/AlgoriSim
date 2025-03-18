@@ -98,18 +98,34 @@ public class FCFS extends JPanel {
     private double avgWaitingTime = 0, avgTurnaroundTime = 0;
     private CustomPanel ganttChartPanel;
     private List<Event> timeline = new ArrayList<>();
+    private CardLayout layout;
+    private JPanel mainPanel;
 
     public FCFS(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        this.layout = layout;
+        this.mainPanel = mainPanel;
+
         // === TOP PANEL ===
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(new JLabel("Algorithm: FCFS", JLabel.LEFT), BorderLayout.WEST);
-        cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
-        topPanel.add(cpuLabel, BorderLayout.CENTER);
-        readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
-        topPanel.add(readyQueueLabel, BorderLayout.EAST);
+
+        // Home Button
+        JButton homeButton = new JButton("← Home");
+        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        homeButton.setPreferredSize(new Dimension(100, 30));
+
+        // Home Button Action: Go back to Lobby
+        homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
+
+        // Add Home Button to the Top Panel
+        topPanel.add(homeButton, BorderLayout.WEST);
+        topPanel.add(new JLabel("Algorithm: FCFS", JLabel.CENTER), BorderLayout.CENTER);
+
+        cpuLabel = new JLabel("CPU: Idle", SwingConstants.RIGHT);
+        topPanel.add(cpuLabel, BorderLayout.EAST);
+
         add(topPanel, BorderLayout.NORTH);
 
         // === PROCESS TABLE ===
@@ -157,28 +173,55 @@ public class FCFS extends JPanel {
     }
 
     private void loadProcessData() {
-        String fileName = "random_data.txt"; // Default file
+        String filename;
 
-        File userInputFile = new File("random_data.txt");
-        if (userInputFile.exists() && userInputFile.length() > 0) {
-            fileName = "random_data.txt"; // Use data.txt if it exists and is not empty
+        switch (DataInputScreen.checker) {
+            case 1:
+                filename = "random_data.txt";
+                break;
+            case 2:
+                filename = "data.txt";
+                break;
+            case 3:
+                filename = "file_input.txt";
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Invalid data source!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+
+        // Check if the file exists and is not empty
+        File file = new File(filename);
+        if (!file.exists() || file.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Selected file is missing or empty!", "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
         processes.clear();
+        readFileAndLoadProcesses(filename);
+    }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+    private void readFileAndLoadProcesses(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
                 if (data.length < 3)
                     continue;
-                processes.add(new Process(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+
+                try {
+                    processes.add(new Process(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid number format in file: " + filename);
+                }
             }
 
+            // Sort by arrival time
             processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
             displayProcesses();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error loading file: " + fileName, "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

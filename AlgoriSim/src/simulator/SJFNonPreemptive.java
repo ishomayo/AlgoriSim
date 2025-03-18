@@ -42,7 +42,8 @@ class CustomPanelSJF extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (timeline.isEmpty()) return;
+        if (timeline.isEmpty())
+            return;
 
         int x = 30, y = 20, width = 30;
 
@@ -86,14 +87,27 @@ public class SJFNonPreemptive extends JPanel {
     private JButton startButton, stopButton;
     private CustomPanelSJF ganttChartPanel;
     private List<EventSJF> timeline = new ArrayList<>();
+    private CardLayout layout;
+    private JPanel mainPanel;
 
     public SJFNonPreemptive(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        this.layout = layout;
+        this.mainPanel = mainPanel;
+        
+        JButton homeButton = new JButton("← Home");
+        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        homeButton.setPreferredSize(new Dimension(100, 30));
+
+        // Home Button Action: Go back to Lobby
+        homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
+
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JLabel("Algorithm: SJF Non-Preemptive", JLabel.LEFT), BorderLayout.WEST);
         cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
         readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
@@ -137,16 +151,43 @@ public class SJFNonPreemptive extends JPanel {
     }
 
     private void loadProcessData() {
-        try (BufferedReader br = new BufferedReader(new FileReader("random_data.txt"))) {
+        String filename;
+
+        switch (DataInputScreen.checker) {
+            case 1:
+                filename = "random_data.txt";
+                break;
+            case 2:
+                filename = "data.txt";
+                break;
+            case 3:
+                filename = "file_input.txt";
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Invalid data source!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+
+        readFileAndLoadProcesses(filename);
+    }
+
+    private void readFileAndLoadProcesses(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 3) continue;
-                processes.add(new ProcessSJF(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+                if (data.length < 3)
+                    continue;
+
+                try {
+                    processes.add(new ProcessSJF(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid number format in file: " + filename);
+                }
             }
             displayProcesses();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error loading file!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

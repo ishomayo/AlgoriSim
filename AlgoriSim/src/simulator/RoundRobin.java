@@ -85,14 +85,27 @@ public class RoundRobin extends JPanel {
     private double avgWaitingTime = 0, avgTurnaroundTime = 0;
     private CustomPanelRR ganttChartPanel;
     private List<EventRR> timeline = new ArrayList<>();
+    private CardLayout layout;
+    private JPanel mainPanel;
 
-    public RoundRobin() {
+    public RoundRobin(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        this.layout = layout;
+        this.mainPanel = mainPanel;
+
+        JButton homeButton = new JButton("← Home");
+        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        homeButton.setPreferredSize(new Dimension(100, 30));
+
+        // Home Button Action: Go back to Lobby
+        homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JLabel("Algorithm: Round Robin", JLabel.LEFT), BorderLayout.WEST);
         cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
         readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
@@ -143,20 +156,47 @@ public class RoundRobin extends JPanel {
     }
 
     private void loadProcessData() {
-        try (BufferedReader br = new BufferedReader(new FileReader("random_data.txt"))) {
+        String filename;
+    
+        switch (DataInputScreen.checker) {
+            case 1:
+                filename = "random_data.txt";
+                break;
+            case 2:
+                filename = "data.txt";
+                break;
+            case 3:
+                filename = "file_input.txt";
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Invalid data source!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+    
+        readFileAndLoadProcesses(filename);
+    }
+    
+    private void readFileAndLoadProcesses(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 3)
-                    continue;
-                processes.add(new ProcessRR(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+                if (data.length < 3) continue;
+    
+                try {
+                    processes.add(new ProcessRR(data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2])));
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid number format in file: " + filename);
+                }
             }
+    
+            // Sort processes by arrival time
             processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
             displayProcesses();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error loading file!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }    
 
     private void displayProcesses() {
         tableModel.setRowCount(0);
