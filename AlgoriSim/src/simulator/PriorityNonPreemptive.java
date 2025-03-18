@@ -117,8 +117,9 @@ public class PriorityNonPreemptive extends JPanel {
 
         String[] columnNames = {
                 "Process ID", "Burst Time", "Arrival Time", "Priority",
-                "Waiting Time", "Turnaround Time"
+                "Waiting Time", "Turnaround Time", "Average Waiting Time", "Average Turnaround Time"
         };
+
         tableModel = new DefaultTableModel(columnNames, 0);
         processTable = new JTable(tableModel);
 
@@ -270,7 +271,7 @@ public class PriorityNonPreemptive extends JPanel {
         processes.sort(Comparator.comparingInt((ProcessPriorityNonPreemptive p) -> p.arrivalTime)
                 .thenComparingInt(p -> p.priority));
 
-        SwingWorker<Void, EventPriorityNonPreemptive> worker = new SwingWorker<Void, EventPriorityNonPreemptive>() {
+        SwingWorker<Void, EventPriorityNonPreemptive> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
                 int currentTime = 0;
@@ -318,26 +319,49 @@ public class PriorityNonPreemptive extends JPanel {
     }
 
     private void updateTable() {
-        tableModel.setRowCount(0);
+        tableModel.setRowCount(0); // Clear the table
+
         double totalWT = 0, totalTAT = 0;
 
+        // Add data for each process
         for (ProcessPriorityNonPreemptive p : processes) {
             totalWT += p.waitingTime;
             totalTAT += p.turnaroundTime;
-            tableModel.addRow(new Object[] { p.processID, p.burstTime, p.arrivalTime, p.priority, p.waitingTime,
-                    p.turnaroundTime });
+            tableModel.addRow(new Object[] {
+                    p.processID,
+                    p.burstTime,
+                    p.arrivalTime,
+                    p.priority,
+                    p.waitingTime,
+                    p.turnaroundTime,
+                    "", // Empty cell for Average Waiting Time
+                    "" // Empty cell for Average Turnaround Time
+            });
         }
 
-        if (!timeline.isEmpty()) {
-            ganttChartPanel.setBorder(BorderFactory.createTitledBorder(
-                    "Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
-        } else {
-            ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | No data available"));
-            System.out.println("Timeline is empty. No Gantt chart data to display.");
-        }
+        // Calculate averages
+        double avgWT = totalWT / processes.size();
+        double avgTAT = totalTAT / processes.size();
 
-        // ganttChartPanel.setBorder(BorderFactory.createTitledBorder(
-        //                 "Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
+        // Format the averages to 2 decimal places
+        String avgWTFormatted = String.format("%.2f", avgWT);
+        String avgTATFormatted = String.format("%.2f", avgTAT);
+
+        // Add the last row for averages
+        tableModel.addRow(new Object[] {
+                "Average",
+                "", // Empty cell for Process ID
+                "", // Empty cell for Burst Time
+                "", // Empty cell for Arrival Time
+                "", // Empty cell for Priority
+                "", // Empty cell for Waiting Time
+                avgWTFormatted, // Display formatted Average Waiting Time
+                avgTATFormatted // Display formatted Average Turnaround Time
+        });
+
+        // Update Gantt chart border with the final running time
+        ganttChartPanel.setBorder(BorderFactory.createTitledBorder(
+                "Gantt Chart | Running Time: " + timeline.get(timeline.size() - 1).finishTime + " ms"));
     }
 
     private void stopSimulation() {
