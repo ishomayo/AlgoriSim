@@ -284,15 +284,23 @@ public class DataInputScreen extends JPanel {
     }
 
     private void validateRandomTableData(DefaultTableModel model, JButton continueButton) {
+        if (continueButton == null) {
+            System.err.println("Error: continueButton is null");
+            return;
+        }
+
+        // Iterate through each row and column to check for empty or null cells
         for (int row = 0; row < model.getRowCount(); row++) {
             for (int col = 0; col < model.getColumnCount(); col++) {
                 Object value = model.getValueAt(row, col);
                 if (value == null || value.toString().trim().isEmpty()) {
-                    continueButton.setEnabled(false);
+                    continueButton.setEnabled(false); // Disable button if empty cell found
                     return;
                 }
             }
         }
+
+        // Enable the continueButton only if all cells are filled
         continueButton.setEnabled(true);
     }
 
@@ -594,10 +602,10 @@ public class DataInputScreen extends JPanel {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < model.getRowCount(); i++) {
-                writer.write( "P" + (i + 1) + " " +// Process ID (P1, P2, P3...)
+                writer.write("P" + (i + 1) + " " + // Process ID (P1, P2, P3...)
                         model.getValueAt(i, 1) + " " + // Arrival Time
-                                model.getValueAt(i, 2) + " " + // Burst Time
-                                model.getValueAt(i, 3)); // Priority Number
+                        model.getValueAt(i, 2) + " " + // Burst Time
+                        model.getValueAt(i, 3)); // Priority Number
                 writer.newLine();
             }
         } catch (IOException e) {
