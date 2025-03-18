@@ -37,7 +37,8 @@ javac -d bin -sourcepath src src/Main.java
 ```
 java -cp bin Main
 ```
-# Formatting the File Input (For User-defined Input from a Text File)
+# Formatting the File Input 
+## (For User-defined Input from a Text File)
 The application expects input files to be formatted as follows:
 * Each line contains three space-separated integers in the following order:
   - Arrival Time
