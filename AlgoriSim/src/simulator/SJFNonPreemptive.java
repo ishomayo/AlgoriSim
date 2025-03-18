@@ -287,8 +287,21 @@ public class SJFNonPreemptive extends JPanel {
         List<ProcessSJF> remainingProcesses = new ArrayList<>(processes);
 
         simulationTimer = new Timer(500, e -> {
+            // Update the Gantt Chart border title to include the running time
             ganttChartPanel.setBorder(
                     BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + currentTime.get() + " ms"));
+
+            // Build Ready Queue Display
+            StringBuilder readyQueueText = new StringBuilder();
+            for (ProcessSJF process : readyQueue) {
+                readyQueueText.append(process.processID).append(" ");
+            }
+
+            // Set CPU status
+            String cpuStatus = readyQueue.isEmpty() ? "Idle" : " " + readyQueue.peek().processID;
+
+            // Update the label
+            cpuLabel.setText("Algorithm: SJF Non-Preemptive | CPU: " + cpuStatus + " | Ready Queue: " + readyQueueText);
 
             // Add new arrivals to the ready queue
             Iterator<ProcessSJF> iterator = remainingProcesses.iterator();
@@ -323,6 +336,7 @@ public class SJFNonPreemptive extends JPanel {
                 simulationTimer.stop();
                 updateTable();
                 startButton.setEnabled(true);
+                cpuLabel.setText("Algorithm: SJF Non-Preemptive | CPU: Idle | Ready Queue: Empty");
             }
         });
 

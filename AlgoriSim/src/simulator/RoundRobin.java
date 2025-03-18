@@ -109,8 +109,8 @@ public class RoundRobin extends JPanel {
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(new JLabel("Algorithm: Round Robin", JLabel.LEFT), BorderLayout.WEST);
-        cpuLabel = new JLabel("Algorithm: Round Robin", SwingConstants.CENTER);
+        topPanel.add(new JLabel("Algorithm: Round Robin", JLabel.RIGHT), BorderLayout.WEST);
+        cpuLabel = new JLabel("Algorithm: Round Robin | CPU: Idle", SwingConstants.CENTER);
         topPanel.setOpaque(false);
         cpuLabel.setForeground(Color.WHITE);
         topPanel.add(homeButton, BorderLayout.WEST);
@@ -300,9 +300,16 @@ public class RoundRobin extends JPanel {
             readyQueue.add(remainingProcesses.remove(0));
         }
 
+        // Build the Ready Queue display string
+        StringBuilder readyQueueDisplay = new StringBuilder();
+        for (ProcessRR p : readyQueue) {
+            readyQueueDisplay.append(p.processID).append(" ");
+        }
+
         if (readyQueue.isEmpty()) {
             // CPU is idle if no processes are ready
             timeline.add(new EventRR("Idle", currentTime, currentTime + 1));
+            cpuLabel.setText("Algorithm: Round Robin | CPU: Idle | Ready Queue: Empty");
             currentTime++;
         } else {
             // Execute the next process in the queue
@@ -312,6 +319,10 @@ public class RoundRobin extends JPanel {
             timeline.add(new EventRR(executingProcess.processID, currentTime, currentTime + executionTime));
             executingProcess.remainingTime -= executionTime;
             currentTime += executionTime;
+
+            // Update CPU label to show the running process and Ready Queue
+            cpuLabel.setText("Algorithm: Round Robin | CPU: " + executingProcess.processID +
+                    " | Ready Queue: " + (readyQueue.isEmpty() ? "Empty" : readyQueueDisplay.toString()));
 
             // Add new arrivals after execution
             while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {

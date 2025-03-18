@@ -149,16 +149,14 @@ public class FCFS extends JPanel {
         topPanel.setOpaque(false); // Makes it transparent to show background
 
         JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
-        CommonConstants.homeClicked);
+                CommonConstants.homeClicked);
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
         topPanel.add(homeButton, BorderLayout.WEST);
 
-        JLabel titleLabel = new JLabel("Algorithm: FCFS", JLabel.CENTER);
-        titleLabel.setForeground(Color.WHITE); // Set font color to white
-        topPanel.add(titleLabel, BorderLayout.CENTER);
+        
 
-        cpuLabel = new JLabel("CPU: Idle", SwingConstants.RIGHT);
+        cpuLabel = new JLabel("Algorithm: FCFS | CPU: Idle", SwingConstants.CENTER);
         cpuLabel.setForeground(Color.WHITE); // Set font color to white
         topPanel.add(cpuLabel, BorderLayout.EAST);
 
@@ -193,11 +191,11 @@ public class FCFS extends JPanel {
         buttonPanel.setOpaque(false);
 
         startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
-        CommonConstants.startClicked);
-        
+                CommonConstants.startClicked);
+
         startButton.addActionListener(e -> startSimulation());
 
-        timerLabel = new JLabel("Running Time: 0 ms");
+        timerLabel = new JLabel(" ");
         timerLabel.setForeground(Color.WHITE);
 
         buttonPanel.add(startButton);
@@ -345,6 +343,12 @@ public class FCFS extends JPanel {
             return;
         }
 
+        // Build the Ready Queue display string
+        StringBuilder readyQueueDisplay = new StringBuilder();
+        for (int i = index + 1; i < processes.size(); i++) {
+            readyQueueDisplay.append(processes.get(i).processID).append(" ");
+        }
+
         Process p = processes.get(index);
         p.startTime = Math.max(currentTime, p.arrivalTime);
         p.completionTime = p.startTime + p.burstTime;
@@ -355,9 +359,12 @@ public class FCFS extends JPanel {
         avgWaitingTime += p.waitingTime;
         avgTurnaroundTime += p.turnaroundTime;
 
-        // Update the running timer
-        timerLabel.setText("Running Time: " + currentTime + " ms");
-        ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + currentTime + " ms"));
+        // Update CPU label to show running process and Ready Queue
+        cpuLabel.setText("Algorithm: FCFS | CPU: " + p.processID +
+                " | Ready Queue: " + (readyQueueDisplay.length() == 0 ? "Empty" : readyQueueDisplay.toString()));
+
+        ganttChartPanel
+                .setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + currentTime + " ms"));
 
         updateUI(p);
         index++;
@@ -370,10 +377,15 @@ public class FCFS extends JPanel {
     }
 
     private void updateAverageTimes() {
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            tableModel.setValueAt(String.format("%.2f", avgWaitingTime), i, 6);
-            tableModel.setValueAt(String.format("%.2f", avgTurnaroundTime), i, 7);
-        }
+        avgWaitingTime /= processes.size();
+        avgTurnaroundTime /= processes.size();
+
+        // Add a new row at the end for the averages
+        tableModel.addRow(new Object[] {
+                "Average", "-", "-", "-", "-", "-",
+                String.format("%.2f", avgWaitingTime),
+                String.format("%.2f", avgTurnaroundTime)
+        });
     }
 
     private void updateUI(Process p) {
