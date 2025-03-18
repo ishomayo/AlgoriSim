@@ -60,9 +60,7 @@ Arrival Time  Burst Time  Priority
 28            21          17  
 19            20          19  
 ```
-<p align="center">
-  <_**Note: A sample .txt file is given as example named "sample.txt"**_>
-</p>
+_**Note: A sample .txt file is given as example named "sample.txt"**_
 # Features
 * **Graphical Interface:** Intuitive UI using Java Swing.
 * **Scheduling Algorithms:** Simulates FCFS, RR, SJF (Preemptive & Non-Preemptive), Priority Scheduling (Preemptive & Non-Preemptive).
