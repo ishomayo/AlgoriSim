@@ -281,32 +281,31 @@ public class RoundRobin extends JPanel {
 
         timeQuantum = Integer.parseInt(quantumField.getText());
         List<ProcessRR> remainingProcesses = new ArrayList<>(processes);
-
-        // Add arriving processes at time 0
-        while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {
-            readyQueue.add(remainingProcesses.remove(0));
-        }
+        remainingProcesses.sort(Comparator.comparingInt(p -> p.arrivalTime));
 
         simulationTimer = new Timer(500, e -> processNextQuantum(remainingProcesses)); // 500ms per step
         simulationTimer.start();
     }
 
     private void processNextQuantum(List<ProcessRR> remainingProcesses) {
+        // Check if all processes are completed
         if (readyQueue.isEmpty() && remainingProcesses.isEmpty()) {
             simulationTimer.stop();
             stopSimulation();
             return;
         }
 
-        // Add new arriving processes to ready queue
+        // Add newly arrived processes to the ready queue
         while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {
             readyQueue.add(remainingProcesses.remove(0));
         }
 
         if (readyQueue.isEmpty()) {
+            // CPU is idle if no processes are ready
             timeline.add(new EventRR("Idle", currentTime, currentTime + 1));
             currentTime++;
         } else {
+            // Execute the next process in the queue
             ProcessRR executingProcess = readyQueue.poll();
             int executionTime = Math.min(timeQuantum, executingProcess.remainingTime);
 
@@ -314,18 +313,25 @@ public class RoundRobin extends JPanel {
             executingProcess.remainingTime -= executionTime;
             currentTime += executionTime;
 
+            // Add new arrivals after execution
+            while (!remainingProcesses.isEmpty() && remainingProcesses.get(0).arrivalTime <= currentTime) {
+                readyQueue.add(remainingProcesses.remove(0));
+            }
+
+            // If the process still has remaining time, add it back to the queue
             if (executingProcess.remainingTime > 0) {
                 readyQueue.add(executingProcess);
             } else {
+                // Process is complete, calculate waiting & turnaround time
                 executingProcess.completionTime = currentTime;
                 executingProcess.turnaroundTime = executingProcess.completionTime - executingProcess.arrivalTime;
                 executingProcess.waitingTime = executingProcess.turnaroundTime - executingProcess.burstTime;
             }
         }
+
+        // Update the Gantt Chart title with the running time
         ganttChartPanel
                 .setBorder(BorderFactory.createTitledBorder("Gantt Chart | Running Time: " + currentTime + " ms"));
-
-        // Update Gantt Chart Dynamically
         ganttChartPanel.setTimeline(timeline);
     }
 
@@ -355,7 +361,8 @@ public class RoundRobin extends JPanel {
         String formattedAvgTurnaroundTime = String.format("%.2f", avgTurnaroundTime);
 
         // Add the averages row
-        tableModel.addRow(new Object[] { "Averages", "-", "-", "-", "-", formattedAvgWaitingTime, formattedAvgTurnaroundTime });
+        tableModel.addRow(
+                new Object[] { "Averages", "-", "-", "-", "-", formattedAvgWaitingTime, formattedAvgTurnaroundTime });
     }
 
 }
