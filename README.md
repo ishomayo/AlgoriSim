@@ -18,7 +18,7 @@ AlgoriSim is a Java-based scheduling algorithm simulator with a graphical user i
 ## 1. Clone the Repository
 If using Git, clone the repository:<br/>
 ```
-git https://github.com/ishomayo/AlgoriSim.git
+git clone https://github.com/ishomayo/AlgoriSim.git
 ```
 Alternatively, download the source code and extract it to your preferred directory.
 ## 2. Navigate to the Project Directory
