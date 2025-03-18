@@ -20,7 +20,7 @@ If using Git, clone the repository:<br/>
 ```
 git https://github.com/ishomayo/AlgoriSim.git
 ```
-<br/>Alternatively, download the source code and extract it to your preferred directory.
+Alternatively, download the source code and extract it to your preferred directory.
 ## 2. Navigate to the Project Directory
 ```
 cd AlgoriSim/AlgoriSim/src/simulator/resources
@@ -33,4 +33,21 @@ javac -d bin -sourcepath src src/Main.java
 ```
 java -cp bin Main
 ```
+
+# Features
+* **Graphical Interface:** Intuitive UI using Java Swing.
+* **Scheduling Algorithms:** Simulates FCFS, RR, SJF (Preemptive & Non-Preemptive), Priority Scheduling (Preemptive & Non-Preemptive).
+* **Interactive Selection:** Users can navigate between different screens to choose and simulate algorithms.
+
+# Snapshots
+* Lobby <br/>![image](https://github.com/user-attachments/assets/8442e265-598e-456c-be96-61329451ec2b)<br/>
+* Data Input Method Selection Screen <br/>![image](https://github.com/user-attachments/assets/4e6c9db8-b324-4ab1-af5b-4fc81fac07c2)<br/>
+* Random Data Generator Screen <br/>![image](https://github.com/user-attachments/assets/4f6a1fc6-f65f-4bbc-99cc-2293158e61ac)<br/>
+* Algorithm Selection Screen <br/>![image](https://github.com/user-attachments/assets/36859bd3-be93-4c8f-b929-e7ab692ae31d)<br/>
+* SJF Preemptive Screen <br/>![image](https://github.com/user-attachments/assets/0f06f3bd-1087-4326-935d-d848a0da96de)<br/>
+
+
+
+
+
 
