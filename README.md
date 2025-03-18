@@ -1,3 +1,8 @@
+<img src="icon.png" alt="Logo" width="150">
+<p align="center">
+  <img src="images/logo.png" alt="Logo" width="150">
+</p>
+
 # AlgoriSim
 This is a repository for the implementation of a CPU Algorithm Scheduling Algorithm Simulator for a requirement in the course CMSC 125 - M.
 
