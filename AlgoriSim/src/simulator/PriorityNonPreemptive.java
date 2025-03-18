@@ -1,7 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -83,17 +85,19 @@ public class PriorityNonPreemptive extends JPanel {
     private List<EventPriorityNonPreemptive> timeline = new ArrayList<>();
     private CardLayout layout;
     private JPanel mainPanel;
+    private Image backgroundImage;
 
     public PriorityNonPreemptive(CardLayout layout, JPanel mainPanel) {
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        backgroundImage = new ImageIcon(CommonConstants.BG).getImage();
+
         this.layout = layout;
         this.mainPanel = mainPanel;
 
-        JButton homeButton = new JButton("← Home");
-        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
-        homeButton.setPreferredSize(new Dimension(100, 30));
+        JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
+        CommonConstants.homeClicked);
 
         // Home Button Action: Go back to Lobby
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
@@ -101,10 +105,14 @@ public class PriorityNonPreemptive extends JPanel {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JLabel("Algorithm: Priority Scheduling Non-Preemptive", JLabel.LEFT), BorderLayout.WEST);
         cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        cpuLabel.setForeground(Color.WHITE);
         topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
         readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
+        topPanel.setOpaque(false);
+        topPanel.setBackground(new Color(0, 0, 0, 0));
         add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = {
@@ -130,8 +138,10 @@ public class PriorityNonPreemptive extends JPanel {
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        startButton = new JButton("Start");
-        stopButton = new JButton("Stop");
+        startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
+        CommonConstants.startClicked);
+        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
+        CommonConstants.stopClicked);
         stopButton.setEnabled(false);
 
         startButton.addActionListener(e -> startSimulation());
@@ -140,15 +150,72 @@ public class PriorityNonPreemptive extends JPanel {
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
         totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel.setForeground(Color.WHITE);
         buttonPanel.add(totalExecutionTimeLabel);
+        buttonPanel.setOpaque(false);
+        buttonPanel.setBackground(new Color(0, 0, 0, 0));
         add(buttonPanel, BorderLayout.PAGE_END);
 
         loadProcessData();
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+    private static JButton createStyledButton(String defaultIconPath, String hoverIconPath, String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+
+        button.setIcon(defaultIcon);
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+        });
+
+        return button;
+    }
+
+    // Helper method to scale an image to fit the button
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+
     private void loadProcessData() {
         String filename;
-    
+
         switch (DataInputScreen.checker) {
             case 1:
                 filename = "random_data.txt";
@@ -163,17 +230,18 @@ public class PriorityNonPreemptive extends JPanel {
                 JOptionPane.showMessageDialog(this, "Invalid data source!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         }
-    
+
         readFileAndLoadProcesses(filename);
     }
-    
+
     private void readFileAndLoadProcesses(String filename) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.trim().split("\\s+");
-                if (data.length < 4) continue;
-    
+                if (data.length < 4)
+                    continue;
+
                 try {
                     processes.add(new ProcessPriorityNonPreemptive(
                             data[0], Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3])));
@@ -185,7 +253,7 @@ public class PriorityNonPreemptive extends JPanel {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }    
+    }
 
     private void displayProcesses() {
         tableModel.setRowCount(0);

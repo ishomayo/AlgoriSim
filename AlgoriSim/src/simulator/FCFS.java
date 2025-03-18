@@ -1,7 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.io.*;
 import java.util.*;
 import javax.swing.Timer;
@@ -33,10 +35,19 @@ class Event {
 
 class CustomPanel extends JPanel {
     private List<Event> timeline = new ArrayList<>();
-    private final Map<String, Color> processColors = new HashMap<>();
-    private final List<Color> availableColors = Arrays.asList(
+    private static final Map<String, Color> processColors = new HashMap<>();
+    private static final List<Color> availableColors = Arrays.asList(
             Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.MAGENTA,
-            Color.CYAN, Color.PINK, Color.YELLOW, Color.LIGHT_GRAY, Color.GRAY);
+            Color.CYAN, Color.PINK, Color.YELLOW, Color.LIGHT_GRAY, Color.GRAY,
+            Color.WHITE, Color.DARK_GRAY, new Color(128, 0, 128), // Purple
+            new Color(255, 165, 0), // Deep Orange
+            new Color(0, 128, 0), // Dark Green
+            new Color(75, 0, 130), // Indigo
+            new Color(255, 105, 180), // Hot Pink
+            new Color(139, 69, 19), // Saddle Brown
+            new Color(0, 191, 255), // Deep Sky Blue
+            new Color(47, 79, 79) // Dark Slate Gray
+    );
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -49,7 +60,7 @@ class CustomPanel extends JPanel {
         for (int i = 0; i < timeline.size(); i++) {
             Event event = timeline.get(i);
 
-            // Assign a unique color to each process
+            // Assign a unique persistent color to each process
             if (!processColors.containsKey(event.processName)) {
                 processColors.put(event.processName,
                         availableColors.get(processColors.size() % availableColors.size()));
@@ -88,7 +99,7 @@ class CustomPanel extends JPanel {
 }
 
 public class FCFS extends JPanel {
-    private JLabel cpuLabel, readyQueueLabel, totalExecutionTimeLabel;
+    private JLabel cpuLabel, readyQueueLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
     private JButton startButton, stopButton;
@@ -100,76 +111,155 @@ public class FCFS extends JPanel {
     private List<Event> timeline = new ArrayList<>();
     private CardLayout layout;
     private JPanel mainPanel;
+    private JLabel timerLabel;
+
+    class BackgroundPanel extends JPanel {
+        private Image bgImage;
+
+        public BackgroundPanel(String imagePath) {
+            try {
+                bgImage = new ImageIcon(imagePath).getImage();
+            } catch (Exception e) {
+                System.err.println("Error loading background image: " + e.getMessage());
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (bgImage != null) {
+                g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
+    }
 
     public FCFS(CardLayout layout, JPanel mainPanel) {
-        setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(20, 20, 20, 20));
+        super(new BorderLayout()); // Remove setLayout and setBorder (handled by BackgroundPanel)
+
+        // Create background panel
+        BackgroundPanel bgPanel = new BackgroundPanel(CommonConstants.BG); // Set your image path
+        bgPanel.setLayout(new BorderLayout(10, 10)); // Use layout to add components
+        bgPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         this.layout = layout;
         this.mainPanel = mainPanel;
 
-        // === TOP PANEL ===
+        // Top Panel
         JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false); // Makes it transparent to show background
 
-        // Home Button
-        JButton homeButton = new JButton("← Home");
-        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
-        homeButton.setPreferredSize(new Dimension(100, 30));
-
-        // Home Button Action: Go back to Lobby
+        JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
+        CommonConstants.homeClicked);
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
 
-        // Add Home Button to the Top Panel
         topPanel.add(homeButton, BorderLayout.WEST);
-        topPanel.add(new JLabel("Algorithm: FCFS", JLabel.CENTER), BorderLayout.CENTER);
+
+        JLabel titleLabel = new JLabel("Algorithm: FCFS", JLabel.CENTER);
+        titleLabel.setForeground(Color.WHITE); // Set font color to white
+        topPanel.add(titleLabel, BorderLayout.CENTER);
 
         cpuLabel = new JLabel("CPU: Idle", SwingConstants.RIGHT);
+        cpuLabel.setForeground(Color.WHITE); // Set font color to white
         topPanel.add(cpuLabel, BorderLayout.EAST);
 
-        add(topPanel, BorderLayout.NORTH);
+        bgPanel.add(topPanel, BorderLayout.NORTH);
 
-        // === PROCESS TABLE ===
+        // Process Table and Gantt Chart Panel
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setOpaque(false);
+
         String[] columnNames = {
                 "Process ID", "Burst Time", "Arrival Time", "Priority Number",
                 "Waiting Time", "Turnaround Time", "Avg Waiting Time", "Avg Turnaround Time"
         };
         tableModel = new DefaultTableModel(columnNames, 0);
         processTable = new JTable(tableModel);
-
         JScrollPane tableScrollPane = new JScrollPane(processTable);
         tableScrollPane.setPreferredSize(new Dimension(700, 200));
 
-        // === GANTT CHART PANEL ===
         ganttChartPanel = new CustomPanel();
         ganttChartPanel.setPreferredSize(new Dimension(700, 75));
         ganttChartPanel.setBorder(BorderFactory.createTitledBorder("Gantt Chart"));
         ganttChartPanel.setBackground(Color.WHITE);
-
         JScrollPane ganttScrollPane = new JScrollPane(ganttChartPanel);
 
-        // Wrap Process Table + Gantt Chart in a new panel with BorderLayout
-        JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(tableScrollPane, BorderLayout.CENTER);
         centerPanel.add(ganttScrollPane, BorderLayout.SOUTH);
 
-        add(centerPanel, BorderLayout.CENTER);
+        bgPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // === BUTTONS ===
+        // Buttons Panel
         JPanel buttonPanel = new JPanel();
-        startButton = new JButton("Start");
-        stopButton = new JButton("Stop");
+        buttonPanel.setOpaque(false);
+
+        startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
+        CommonConstants.startClicked);
+        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
+        CommonConstants.stopClicked);
         stopButton.setEnabled(false);
 
         startButton.addActionListener(e -> startSimulation());
         stopButton.addActionListener(e -> stopSimulation());
 
+        timerLabel = new JLabel("Running Time: 0 ms");
+        timerLabel.setForeground(Color.WHITE);
+
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
-        totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
-        buttonPanel.add(totalExecutionTimeLabel);
-        add(buttonPanel, BorderLayout.PAGE_END);
+        buttonPanel.add(timerLabel);
+
+        bgPanel.add(buttonPanel, BorderLayout.PAGE_END);
+
+        // Set the background panel as the main component
+        add(bgPanel);
 
         loadProcessData();
+    }
+
+    private static JButton createStyledButton(String defaultIconPath, String hoverIconPath, String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+
+        button.setIcon(defaultIcon);
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+        });
+
+        return button;
+    }
+
+    // Helper method to scale an image to fit the button
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 
     private void loadProcessData() {
@@ -271,6 +361,9 @@ public class FCFS extends JPanel {
 
         avgWaitingTime += p.waitingTime;
         avgTurnaroundTime += p.turnaroundTime;
+
+        // Update the running timer
+        timerLabel.setText("Running Time: " + currentTime + " ms");
 
         updateUI(p);
         index++;

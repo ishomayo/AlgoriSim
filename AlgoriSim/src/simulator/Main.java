@@ -41,12 +41,7 @@ public class Main extends JFrame {
     public void Lobby() {
         // Load the background image
         ImageIcon backgroundImage = new ImageIcon(
-                "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\Lobby.png"); // Replace
-                                                                                                                // with
-                                                                                                                // your
-                                                                                                                // actual
-                                                                                                                // image
-                                                                                                                // path
+                "C:\\Users\\Eugene\\Desktop\\Git\\AlgoriSim\\AlgoriSim\\src\\simulator\\resources\\Lobby.png");
 
         // Custom JPanel to draw the background image
         JPanel panel = new JPanel(new BorderLayout()) {

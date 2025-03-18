@@ -57,6 +57,7 @@ public class CommonConstants {
     public static final String splash = BASE_PATH + "splash.gif";
     public static final String help = BASE_PATH + "help.jpg";
     public static final String credits = BASE_PATH + "credits.jpg";
+    public static final String BG = BASE_PATH + "BG.jpg";
 
     public static final String genDefault = BASE_PATH + "gen_default.png";
     public static final String genHover = BASE_PATH + "gen_hover.png";
@@ -73,4 +74,12 @@ public class CommonConstants {
     public static final String chooseDefault = BASE_PATH + "choose_default.png";
     public static final String chooseHover = BASE_PATH + "choose_hover.png";
     public static final String chooseClicked = BASE_PATH + "choose_clicked.png";
+
+    public static final String stopDefault = BASE_PATH + "stop_default.png";
+    public static final String stopHover = BASE_PATH + "stop_hover.png";
+    public static final String stopClicked = BASE_PATH + "stop_clicked.png";
+
+    public static final String homeDefault = BASE_PATH + "home_default.png";
+    public static final String homeHover = BASE_PATH + "home_hover.png";
+    public static final String homeClicked = BASE_PATH + "home_clicked.png";
 }

@@ -1,7 +1,9 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseEvent;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -35,9 +37,18 @@ class EventSJF {
 class CustomPanelSJF extends JPanel {
     private List<EventSJF> timeline = new ArrayList<>();
     private final Map<String, Color> processColors = new HashMap<>();
-    private final List<Color> availableColors = Arrays.asList(
+    private static final List<Color> availableColors = Arrays.asList(
             Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE, Color.MAGENTA,
-            Color.CYAN, Color.PINK, Color.YELLOW, Color.LIGHT_GRAY, Color.GRAY);
+            Color.CYAN, Color.PINK, Color.YELLOW, Color.LIGHT_GRAY, Color.GRAY,
+            Color.WHITE, Color.DARK_GRAY, new Color(128, 0, 128), // Purple
+            new Color(255, 165, 0), // Deep Orange
+            new Color(0, 128, 0), // Dark Green
+            new Color(75, 0, 130), // Indigo
+            new Color(255, 105, 180), // Hot Pink
+            new Color(139, 69, 19), // Saddle Brown
+            new Color(0, 191, 255), // Deep Sky Blue
+            new Color(47, 79, 79) // Dark Slate Gray
+    );
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -89,17 +100,19 @@ public class SJFNonPreemptive extends JPanel {
     private List<EventSJF> timeline = new ArrayList<>();
     private CardLayout layout;
     private JPanel mainPanel;
+    private Image backgroundImage;
 
     public SJFNonPreemptive(CardLayout layout, JPanel mainPanel) {
+        backgroundImage = new ImageIcon(CommonConstants.BG).getImage(); // Replace with your image file
+
         setLayout(new BorderLayout(10, 10));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
         this.layout = layout;
         this.mainPanel = mainPanel;
-        
-        JButton homeButton = new JButton("← Home");
-        homeButton.setFont(new Font("Arial", Font.BOLD, 14));
-        homeButton.setPreferredSize(new Dimension(100, 30));
+
+        JButton homeButton = createStyledButton(CommonConstants.homeDefault, CommonConstants.homeHover,
+                CommonConstants.homeClicked);
 
         // Home Button Action: Go back to Lobby
         homeButton.addActionListener(e -> layout.show(mainPanel, "Lobby"));
@@ -107,10 +120,15 @@ public class SJFNonPreemptive extends JPanel {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JLabel("Algorithm: SJF Non-Preemptive", JLabel.LEFT), BorderLayout.WEST);
         cpuLabel = new JLabel("CPU: Idle", SwingConstants.CENTER);
+        cpuLabel.setForeground(Color.WHITE);
         topPanel.add(homeButton, BorderLayout.WEST);
         topPanel.add(cpuLabel, BorderLayout.CENTER);
         readyQueueLabel = new JLabel("Ready Queue: Empty", SwingConstants.RIGHT);
+        readyQueueLabel.setForeground(Color.WHITE);
         topPanel.add(readyQueueLabel, BorderLayout.EAST);
+        topPanel.setOpaque(false);
+        topPanel.setBackground(new Color(0, 0, 0, 0));
+
         add(topPanel, BorderLayout.NORTH);
 
         String[] columnNames = { "Process ID", "Burst Time", "Arrival Time",
@@ -131,11 +149,14 @@ public class SJFNonPreemptive extends JPanel {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(tableScrollPane, BorderLayout.CENTER);
         centerPanel.add(ganttScrollPane, BorderLayout.SOUTH);
+
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
-        startButton = new JButton("Start");
-        stopButton = new JButton("Stop");
+        startButton = createStyledButton(CommonConstants.startDefault, CommonConstants.startHover,
+                CommonConstants.startClicked);
+        stopButton = createStyledButton(CommonConstants.stopDefault, CommonConstants.stopHover,
+                CommonConstants.stopClicked);
         stopButton.setEnabled(false);
 
         startButton.addActionListener(e -> startSimulation());
@@ -144,10 +165,70 @@ public class SJFNonPreemptive extends JPanel {
         buttonPanel.add(startButton);
         buttonPanel.add(stopButton);
         totalExecutionTimeLabel = new JLabel("Total Execution Time: 0 ms");
+        totalExecutionTimeLabel.setForeground(Color.WHITE);
+        buttonPanel.setOpaque(false);
+        buttonPanel.setBackground(new Color(0, 0, 0, 0));
+
         buttonPanel.add(totalExecutionTimeLabel);
         add(buttonPanel, BorderLayout.PAGE_END);
 
         loadProcessData();
+
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+    // Helper method for button styling
+    private static JButton createStyledButton(String defaultIconPath, String hoverIconPath, String clickIconPath) {
+        JButton button = new JButton();
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(150, 50));
+
+        // Load and scale the images
+        ImageIcon defaultIcon = scaleImage(defaultIconPath, button.getPreferredSize());
+        ImageIcon hoverIcon = scaleImage(hoverIconPath, button.getPreferredSize());
+        ImageIcon clickIcon = scaleImage(clickIconPath, button.getPreferredSize());
+
+        button.setIcon(defaultIcon);
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setIcon(defaultIcon);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                button.setIcon(clickIcon);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                button.setIcon(hoverIcon);
+            }
+        });
+
+        return button;
+    }
+
+    // Helper method to scale an image to fit the button
+    private static ImageIcon scaleImage(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        Image img = icon.getImage().getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
     }
 
     private void loadProcessData() {
