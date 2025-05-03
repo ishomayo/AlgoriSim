@@ -103,6 +103,9 @@ public class CommonConstants {
     public static final String homeDefault = BASE_PATH + "home_default.png";
     public static final String homeHover = BASE_PATH + "home_hover.png";
     public static final String homeClicked = BASE_PATH + "home_clicked.png";
+    public static final String removeDefault = BASE_PATH + "remove_default.png";
+    public static final String removeHover = BASE_PATH + "remove_hover.png";
+    public static final String removeClicked = BASE_PATH + "remove_clicked.png";
 
     // Utility method to load images
     public static Image loadImage(String path) {

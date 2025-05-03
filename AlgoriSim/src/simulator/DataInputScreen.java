@@ -63,7 +63,7 @@ public class DataInputScreen extends JPanel {
                 CommonConstants.randomClicked, CommonConstants.randomHover);
         JButton userInputButton = createStyledButtonDATAINPUT(CommonConstants.userinpDefault,
                 CommonConstants.userinpClicked, CommonConstants.userinpHover);
-        JButton fileInputButton = createStyledButtonDATAINPUT(CommonConstants.fileDefault, 
+        JButton fileInputButton = createStyledButtonDATAINPUT(CommonConstants.fileDefault,
                 CommonConstants.fileClicked, CommonConstants.fileHover);
 
         buttonPanel.setBorder(new EmptyBorder(150, 0, 0, 0)); // Adjust the first value (top padding)
@@ -91,7 +91,8 @@ public class DataInputScreen extends JPanel {
         mainPanel.add(panel, "DataInputSelection");
     }
 
-    private static JButton createStyledButtonDATAINPUT(String defaultIconPath, String clickIconPath, String hoverIconPath) {
+    private static JButton createStyledButtonDATAINPUT(String defaultIconPath, String clickIconPath,
+            String hoverIconPath) {
         JButton button = new JButton();
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
@@ -106,7 +107,7 @@ public class DataInputScreen extends JPanel {
         button.setIcon(defaultIcon);
 
         button.addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setIcon(defaultIcon);
@@ -374,6 +375,35 @@ public class DataInputScreen extends JPanel {
 
         backButton.addActionListener(e -> layout.show(mainPanel, "DataInputSelection"));
 
+        JButton removeProcessButton = createStyledButton(CommonConstants.removeDefault,
+                CommonConstants.removeHover,
+                CommonConstants.removeClicked);
+
+        removeProcessButton.addActionListener(e -> {
+            int selectedRow = processTable.getSelectedRow();
+            int rowCount = tableModel.getRowCount();
+            if (selectedRow != -1) {
+
+                if (rowCount <= 1) {
+                    JOptionPane.showMessageDialog(null, "At least one process must remain in the table", 
+                            "Cannot Remove", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                tableModel.removeRow(selectedRow);
+
+                // Update all process IDs after the removed row
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    tableModel.setValueAt("P" + (i + 1), i, 0);
+                }
+
+                validateUserInputTableData(tableModel, continueButton);
+            } else {
+                JOptionPane.showMessageDialog(null, "Please select a row to remove", "No Selection",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
         // Continue Button Action
         continueButton.addActionListener(e -> {
             if (validateUserInputTableData(tableModel, continueButton)) {
@@ -389,9 +419,11 @@ public class DataInputScreen extends JPanel {
 
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.setOpaque(false); // Make it transparent
+        
         bottomPanel.add(addProcessButton);
         bottomPanel.add(backButton);
         bottomPanel.add(continueButton);
+        bottomPanel.add(removeProcessButton); 
 
         // Add Components
         userInputPanel.add(titleLabel, BorderLayout.NORTH);
@@ -603,10 +635,10 @@ public class DataInputScreen extends JPanel {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < model.getRowCount(); i++) {
-                writer.write( "P" + (i + 1) + " " +// Process ID (P1, P2, P3...)
+                writer.write("P" + (i + 1) + " " + // Process ID (P1, P2, P3...)
                         model.getValueAt(i, 1) + " " + // Arrival Time
-                                model.getValueAt(i, 2) + " " + // Burst Time
-                                model.getValueAt(i, 3)); // Priority Number
+                        model.getValueAt(i, 2) + " " + // Burst Time
+                        model.getValueAt(i, 3)); // Priority Number
                 writer.newLine();
             }
         } catch (IOException e) {

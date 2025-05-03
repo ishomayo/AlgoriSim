@@ -14,9 +14,6 @@
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>C:\Users\Eugene\Desktop\Git\AlgoriSim\icon.ico</icon>
-  <classPath>
-    <mainClass>Main</mainClass>
-  </classPath>
   <jre>
     <path>%JAVA_HOME%;%PATH%</path>
     <requiresJdk>false</requiresJdk>
