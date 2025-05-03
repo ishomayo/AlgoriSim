@@ -370,8 +370,6 @@ public class FCFS extends JPanel {
         index++;
 
         if (index == processes.size()) {
-            avgWaitingTime /= processes.size();
-            avgTurnaroundTime /= processes.size();
             updateAverageTimes();
         }
     }
