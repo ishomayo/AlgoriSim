@@ -71,7 +71,7 @@ _**Note: A sample .txt file is given as example named "sample.txt"**_
 * Data Input Method Selection Screen <br/><br/>![image](https://github.com/user-attachments/assets/4e6c9db8-b324-4ab1-af5b-4fc81fac07c2)<br/><br/>
 * Random Data Generator Screen <br/><br/>![image](https://github.com/user-attachments/assets/4f6a1fc6-f65f-4bbc-99cc-2293158e61ac)<br/><br/>
 * Algorithm Selection Screen <br/><br/>![image](https://github.com/user-attachments/assets/36859bd3-be93-4c8f-b929-e7ab692ae31d)<br/><br/>
-* SJF Preemptive Screen <br/><br/>![image](https://github.com/user-attachments/assets/0f06f3bd-1087-4326-935d-d848a0da96de)<br/>
+* SJF Preemptive Screen <br/><br/>![image](https://github.com/user-attachments/assets/0f06f3bd-1087-4326-935d-d848a0da96de)<br/><br/>
 
 
 
