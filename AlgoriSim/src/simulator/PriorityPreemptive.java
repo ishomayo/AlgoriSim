@@ -292,7 +292,7 @@ public class PriorityPreemptive extends JPanel {
 
             if (!queue.isEmpty()) {
                 ProcessPriorityPreemptive current = queue.get(0);
-                int executionTime = Math.min(3, current.remainingTime); // Execute for 3-time units or remaining time
+                int executionTime = Math.min(1, current.remainingTime); // Execute for 3-time units or remaining time
                 timeline.add(new EventPriorityPreemptive(current.processID, currentTime, currentTime + executionTime));
 
                 current.remainingTime -= executionTime;

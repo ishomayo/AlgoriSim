@@ -279,6 +279,13 @@ public class RoundRobin extends JPanel {
         ganttChartPanel.setTimeline(timeline);
         readyQueue.clear();
 
+        for(ProcessRR p: processes) {
+            p.completionTime = 0;
+            p.remainingTime = p.burstTime; // Reset remaining time for each process
+            p.waitingTime = 0; // Reset waiting time for each process
+            p.turnaroundTime = 0; // Reset turnaround time for each process
+        }
+
         timeQuantum = Integer.parseInt(quantumField.getText());
         List<ProcessRR> remainingProcesses = new ArrayList<>(processes);
         remainingProcesses.sort(Comparator.comparingInt(p -> p.arrivalTime));
