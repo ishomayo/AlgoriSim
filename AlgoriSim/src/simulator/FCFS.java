@@ -154,8 +154,6 @@ public class FCFS extends JPanel {
 
         topPanel.add(homeButton, BorderLayout.WEST);
 
-        
-
         cpuLabel = new JLabel("Algorithm: FCFS | CPU: Idle", SwingConstants.CENTER);
         cpuLabel.setForeground(Color.WHITE); // Set font color to white
         topPanel.add(cpuLabel, BorderLayout.EAST);
@@ -301,7 +299,7 @@ public class FCFS extends JPanel {
             }
 
             // Sort by arrival time
-            processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+            // processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
             displayProcesses();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error loading file: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
@@ -317,16 +315,86 @@ public class FCFS extends JPanel {
         }
     }
 
+    private int simIndex = 0;
+    private List<Process> simulationOrder;
+
     private void startSimulation() {
-        startButton.setEnabled(false);
-        index = 0;
+        resetSimulation();
         currentTime = 0;
         avgWaitingTime = 0;
         avgTurnaroundTime = 0;
         timeline.clear();
         ganttChartPanel.repaint();
-        timer = new Timer(1000, e -> runFCFS());
+
+        // Make a sorted list for simulation order (arrival time)
+        simulationOrder = new ArrayList<>(processes);
+        simulationOrder.sort(Comparator.comparingInt(p -> p.arrivalTime));
+
+        simIndex = 0;
+        timer = new Timer(1000, e -> simulateStep()); // 1000 ms = 1 sec per process
         timer.start();
+    }
+
+    private boolean isAverageRowAdded = false;
+
+    private void resetSimulation() {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+
+        simIndex = 0;
+        currentTime = 0;
+        avgWaitingTime = 0;
+        avgTurnaroundTime = 0;
+        timeline.clear();
+
+        // Reset table values (waiting time and turnaround time)
+        for (int i = 0; i < processes.size(); i++) {
+            tableModel.setValueAt("", i, 4); // Waiting Time
+            tableModel.setValueAt("", i, 5); // Turnaround Time
+        }
+
+        // Repaint Gantt chart
+        ganttChartPanel.setTimeline(timeline);
+        ganttChartPanel.repaint();
+
+        // Re-enable start button
+        startButton.setEnabled(true);
+        isAverageRowAdded = false;
+    }
+
+    private void simulateStep() {
+        if (simIndex >= simulationOrder.size()) {
+            timer.stop();
+            updateAverageTimes();
+            return;
+        }
+
+        Process p = simulationOrder.get(simIndex);
+
+        p.startTime = Math.max(currentTime, p.arrivalTime);
+        p.completionTime = p.startTime + p.burstTime;
+        p.turnaroundTime = p.completionTime - p.arrivalTime;
+        p.waitingTime = p.startTime - p.arrivalTime;
+        currentTime = p.completionTime;
+
+        avgWaitingTime += p.waitingTime;
+        avgTurnaroundTime += p.turnaroundTime;
+
+        timeline.add(new Event(p.processID, p.startTime, p.completionTime));
+        ganttChartPanel.setTimeline(timeline);
+        ganttChartPanel.repaint();
+
+        // Update values in table by matching process ID
+        for (int i = 0; i < processes.size(); i++) {
+            if (processes.get(i).processID.equals(p.processID)) {
+                tableModel.setValueAt(p.waitingTime, i, 4);
+                tableModel.setValueAt(p.turnaroundTime, i, 5);
+                break;
+            }
+        }
+
+        simIndex++;
     }
 
     private void stopSimulation() {
@@ -378,12 +446,16 @@ public class FCFS extends JPanel {
         avgWaitingTime /= processes.size();
         avgTurnaroundTime /= processes.size();
 
-        // Add a new row at the end for the averages
-        tableModel.addRow(new Object[] {
-                "Average", "-", "-", "-", "-", "-",
-                String.format("%.2f", avgWaitingTime),
-                String.format("%.2f", avgTurnaroundTime)
-        });
+        // Only add the average row if it has not been added already
+        if (!isAverageRowAdded) {
+            tableModel.addRow(new Object[] {
+                    "Average", "-", "-", "-", "-", "-",
+                    String.format("%.2f", avgWaitingTime),
+                    String.format("%.2f", avgTurnaroundTime)
+            });
+
+            isAverageRowAdded = true; // Set flag to true to prevent adding it again
+        }
     }
 
     private void updateUI(Process p) {
