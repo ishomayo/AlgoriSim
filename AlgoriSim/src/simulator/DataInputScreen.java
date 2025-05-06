@@ -384,8 +384,8 @@ public class DataInputScreen extends JPanel {
             int rowCount = tableModel.getRowCount();
             if (selectedRow != -1) {
 
-                if (rowCount <= 1) {
-                    JOptionPane.showMessageDialog(null, "At least one process must remain in the table", 
+                if (rowCount <= 3) {
+                    JOptionPane.showMessageDialog(null, "At least three processes must remain in the table", 
                             "Cannot Remove", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
