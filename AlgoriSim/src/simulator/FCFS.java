@@ -99,6 +99,8 @@ class CustomPanel extends JPanel {
 }
 
 public class FCFS extends JPanel {
+    private boolean isAverageRowAdded = false;
+    private int counter = 0;
     private JLabel cpuLabel, readyQueueLabel;
     private JTable processTable;
     private DefaultTableModel tableModel;
@@ -333,11 +335,18 @@ public class FCFS extends JPanel {
         simIndex = 0;
         timer = new Timer(1000, e -> simulateStep()); // 1000 ms = 1 sec per process
         timer.start();
+        counter++;
     }
 
-    private boolean isAverageRowAdded = false;
-
     private void resetSimulation() {
+        counter = 0;
+        int rowCount = tableModel.getRowCount();
+
+        // Check if the last row is the average row, and remove it if necessary
+        if (rowCount > 0 && "Average".equals(tableModel.getValueAt(rowCount - 1, 0))) {
+            tableModel.removeRow(rowCount - 1);
+        }
+
         if (timer != null && timer.isRunning()) {
             timer.stop();
         }
